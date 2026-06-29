@@ -51,86 +51,74 @@ const Navbar = () => {
    return (
      <>
       {/* Top Navbar */}
-      <nav className="fixed top-4 left-1/2 -translate-x-1/2 w-[95%] lg:w-[90%] max-w-7xl z-50 transition-all duration-1000 ease-out">
+      <nav className="fixed top-4 left-1/2 -translate-x-1/2 w-[95%] lg:w-[90%] max-w-7xl z-50 transition-all duration-500 ease-out">
          
-         <div className="w-full flex flex-col items-center justify-center gap-3">
+         <div className="w-full flex items-center justify-between bg-white/80 backdrop-blur-lg border border-white/40 py-2.5 px-6 md:px-8 shadow-lg rounded-full">
             
-            {/* Mobile Hamburger Icon (Always visible on mobile left corner) */}
-            <div className={`xl:hidden absolute left-4 md:left-10 flex items-center z-[70] transition-all duration-1000 top-1/2 -translate-y-1/2`}>
-               <button 
-                  onClick={() => setOpen(true)}
-                  className="p-2 rounded-xl transition-all shadow-md bg-[#002855] text-white hover:bg-[#001f42] active:scale-95"
-               >
-                  <Menu size={28} className="md:w-8 md:h-8" />
-               </button>
+            {/* Left: Logos */}
+            <div className="flex items-center gap-2 sm:gap-4 flex-shrink-0">
+               <img src={srecLogo} alt="SREC" className="h-10 sm:h-12 w-auto object-contain flex-shrink-0" />
+               <img src={ieeeLogo} alt="IEEE" className="h-10 sm:h-12 w-auto object-contain flex-shrink-0" />
+               <img src={snrLogo} alt="SNR" className="h-10 sm:h-12 w-auto object-contain flex-shrink-0" />
             </div>
 
-            {/* Top Row: Logos with ultra-smooth cinematic hide animation - Glassmorphism Background */}
-            <motion.div 
-               initial={false}
-               animate={{ 
-                  height: hideLogos ? 0 : "auto", 
-                  opacity: hideLogos ? 0 : 1,
-                  scale: hideLogos ? 0.95 : 1
-               }}
-               transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-               className="w-full bg-white/80 backdrop-blur-lg border border-white/40 origin-top relative z-50 overflow-hidden shadow-lg rounded-3xl"
-            >
-               <div className="flex justify-center items-center xl:grid xl:grid-cols-3 w-full px-6 sm:px-16 xl:px-24 py-3 md:py-4 gap-4 sm:gap-8 xl:gap-8">
-                  <div className="flex justify-center items-center">
-                     <img src={srecLogo} alt="SREC" className="h-20 sm:h-22 md:h-24 lg:h-24 w-auto object-contain flex-shrink-0" />
-                  </div>
-                  <div className="flex justify-center items-center">
-                     <img src={ieeeLogo} alt="IEEE" className="h-20 sm:h-22 md:h-24 lg:h-24 w-auto object-contain flex-shrink-0" />
-                  </div>
-                  <div className="flex justify-center items-center">
-                     <img src={snrLogo} alt="SNR Trust" className="h-20 sm:h-22 md:h-24 lg:h-24 w-auto object-contain flex-shrink-0" />
-                  </div>
-               </div>
-            </motion.div>
-
-            {/* Bottom Row: Desktop Horizontal Nav Links - Glassmorphism Blue Cylinder/Pill */}
-            <div className="hidden xl:flex items-center justify-center gap-x-8 gap-y-2 flex-wrap w-full bg-[#002855]/85 backdrop-blur-lg border border-white/10 py-3.5 px-8 transition-all duration-700 shadow-lg rounded-full">
+            {/* Middle: Desktop Horizontal Nav Links */}
+            <div className="hidden xl:flex items-center justify-center gap-x-6 gap-y-1 flex-wrap">
                {navLinks.map((l, index) => {
                   const isExternal = l.href.startsWith("http://") || l.href.startsWith("https://");
                   return isExternal ? (
                      <motion.a
                         initial={{ opacity: 0, y: -10 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 1.2, delay: 0.2 + (index * 0.05), ease: [0.16, 1, 0.3, 1] }}
+                        transition={{ duration: 1.2, delay: 0.1 + (index * 0.03), ease: [0.16, 1, 0.3, 1] }}
                         key={l.label}
                         href={l.href}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-white/90 hover:text-white font-bold tracking-[0.3em] text-[11px] uppercase transition-all duration-500 relative group"
+                        className="text-[#002855] hover:text-blue-600 font-bold tracking-[0.2em] text-[10px] uppercase transition-all duration-350 relative group"
                      >
                         {l.label}
-                        <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-0 h-[2px] transition-all duration-500 group-hover:w-full bg-white"></span>
+                        <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-0 h-[2px] transition-all duration-350 group-hover:w-full bg-blue-600"></span>
                      </motion.a>
                   ) : (
                      <MotionLink
                         initial={{ opacity: 0, y: -10 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 1.2, delay: 0.2 + (index * 0.05), ease: [0.16, 1, 0.3, 1] }}
+                        transition={{ duration: 1.2, delay: 0.1 + (index * 0.03), ease: [0.16, 1, 0.3, 1] }}
                         key={l.label}
                         to={l.href}
-                        className="text-white/90 hover:text-white font-bold tracking-[0.3em] text-[11px] uppercase transition-all duration-500 relative group"
+                        className="text-[#002855] hover:text-blue-600 font-bold tracking-[0.2em] text-[10px] uppercase transition-all duration-350 relative group"
                      >
                         {l.label}
-                        <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-0 h-[2px] transition-all duration-500 group-hover:w-full bg-white"></span>
+                        <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-0 h-[2px] transition-all duration-350 group-hover:w-full bg-blue-600"></span>
                      </MotionLink>
                   );
                })}
+            </div>
+
+            {/* Right: VTOOLS & Mobile Menu Button */}
+            <div className="flex items-center gap-4">
+               {/* Desktop VTOOLS Link */}
                <motion.a
-                     initial={{ opacity: 0, y: -10 }}
-                     animate={{ opacity: 1, y: 0 }}
-                     transition={{ duration: 1.2, delay: 0.2 + (navLinks.length * 0.05), ease: [0.16, 1, 0.3, 1] }}
-                     href="https://vtools.vtools.ieee.org/" target="_blank"
-                     className="text-white/90 hover:text-white font-bold tracking-[0.3em] text-[11px] uppercase transition-all duration-500 relative group"
-                  >
-                     VTOOLS
-                     <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-0 h-[2px] transition-all duration-500 group-hover:w-full bg-white"></span>
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 1.2, delay: 0.1 + (navLinks.length * 0.03), ease: [0.16, 1, 0.3, 1] }}
+                  href="https://vtools.vtools.ieee.org/" target="_blank"
+                  className="hidden xl:inline-block text-[#002855] hover:text-blue-600 font-bold tracking-[0.2em] text-[10px] uppercase transition-all duration-350 relative group"
+               >
+                  VTOOLS
+                  <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-0 h-[2px] transition-all duration-350 group-hover:w-full bg-blue-600"></span>
                </motion.a>
+
+               {/* Mobile Hamburger Icon */}
+               <div className="xl:hidden flex items-center">
+                  <button 
+                     onClick={() => setOpen(true)}
+                     className="p-2.5 rounded-full transition-all shadow-md bg-[#002855] text-white hover:bg-blue-600 active:scale-95"
+                  >
+                     <Menu size={20} />
+                  </button>
+               </div>
             </div>
 
          </div>
@@ -138,7 +126,7 @@ const Navbar = () => {
 
       {/* Global Transparent Spacer for Subpages to prevent content clipping under the tall fixed navbar */}
       {!isHomePage && (
-         <div className="h-[140px] sm:h-[160px] md:h-[200px] lg:h-[240px] w-full bg-transparent pointer-events-none" aria-hidden="true"></div>
+         <div className="h-[90px] w-full bg-transparent pointer-events-none" aria-hidden="true"></div>
       )}
 
       {/* Mobile Sidebar/Dropdown Menu */}
