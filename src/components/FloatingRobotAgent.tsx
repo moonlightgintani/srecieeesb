@@ -105,6 +105,47 @@ const callGeminiAPI = async (userPrompt: string): Promise<string> => {
 };
 
 const getAIResponse = async (input: string): Promise<string> => {
+  const cleanInput = input.toLowerCase().trim();
+  
+  // 1. Check for exact or highly similar matches to the question field
+  let bestMatch = qaDatabase.find(
+    (qa) =>
+      cleanInput.includes(qa.question.toLowerCase()) ||
+      qa.question.toLowerCase().includes(cleanInput)
+  );
+
+  // 2. Check for specific suggested questions
+  if (!bestMatch) {
+    if (cleanInput.includes("who can join")) {
+      bestMatch = qaDatabase[0];
+    } else if (cleanInput.includes("benefit")) {
+      bestMatch = qaDatabase[1];
+    } else if (cleanInput.includes("participate") || cleanInput.includes("how to join")) {
+      bestMatch = qaDatabase[2];
+    } else if (cleanInput.includes("leadership") || cleanInput.includes("roles")) {
+      bestMatch = qaDatabase[3];
+    }
+  }
+
+  // 3. Fallback to keyword matching (word boundaries check)
+  if (!bestMatch) {
+    const inputWords = cleanInput.split(/\s+/);
+    for (const qa of qaDatabase) {
+      const hasKeyword = qa.keywords.some((keyword) =>
+        inputWords.includes(keyword.toLowerCase())
+      );
+      if (hasKeyword) {
+        bestMatch = qa;
+        break;
+      }
+    }
+  }
+
+  if (bestMatch) {
+    console.log("Using local QA database response for:", input);
+    return bestMatch.answer;
+  }
+
   return await callGeminiAPI(input);
 };
 
