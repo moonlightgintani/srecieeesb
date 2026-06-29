@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import img1 from "@/assets/gallery/Display/IMG20251015134912.jpg";
+import img1 from "@/assets/IMG20251015134912.jpg";
 
 const images = [img1];
 
