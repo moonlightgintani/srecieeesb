@@ -51,9 +51,9 @@ const Navbar = () => {
    return (
      <>
       {/* Top Navbar */}
-      <nav className="fixed top-0 left-0 w-full z-50 transition-all duration-1000 ease-out shadow-2xl">
+      <nav className="fixed top-4 left-1/2 -translate-x-1/2 w-[95%] lg:w-[90%] max-w-7xl z-50 transition-all duration-1000 ease-out">
          
-         <div className="w-full flex flex-col items-center justify-center">
+         <div className="w-full flex flex-col items-center justify-center gap-3">
             
             {/* Mobile Hamburger Icon (Always visible on mobile left corner) */}
             <div className={`xl:hidden absolute left-4 md:left-10 flex items-center z-[70] transition-all duration-1000 top-1/2 -translate-y-1/2`}>
@@ -74,7 +74,7 @@ const Navbar = () => {
                   scale: hideLogos ? 0.95 : 1
                }}
                transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-               className="w-full bg-white/70 backdrop-blur-lg border-b border-white/20 origin-top relative z-50 overflow-hidden shadow-md"
+               className="w-full bg-white/80 backdrop-blur-lg border border-white/40 origin-top relative z-50 overflow-hidden shadow-lg rounded-3xl"
             >
                <div className="flex justify-center items-center xl:grid xl:grid-cols-3 w-full px-6 sm:px-16 xl:px-24 py-3 md:py-4 gap-4 sm:gap-8 xl:gap-8">
                   <div className="flex justify-center items-center">
@@ -89,8 +89,8 @@ const Navbar = () => {
                </div>
             </motion.div>
 
-            {/* Bottom Row: Desktop Horizontal Nav Links - Glassmorphism Blue Background */}
-            <div className="hidden xl:flex items-center justify-center gap-x-8 gap-y-2 flex-wrap w-full bg-[#002855]/75 backdrop-blur-lg border-t border-b border-white/10 py-4 px-4 transition-all duration-700 shadow-inner">
+            {/* Bottom Row: Desktop Horizontal Nav Links - Glassmorphism Blue Cylinder/Pill */}
+            <div className="hidden xl:flex items-center justify-center gap-x-8 gap-y-2 flex-wrap w-full bg-[#002855]/85 backdrop-blur-lg border border-white/10 py-3.5 px-8 transition-all duration-700 shadow-lg rounded-full">
                {navLinks.map((l, index) => {
                   const isExternal = l.href.startsWith("http://") || l.href.startsWith("https://");
                   return isExternal ? (
