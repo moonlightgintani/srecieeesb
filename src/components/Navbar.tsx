@@ -90,7 +90,7 @@ const Navbar = () => {
             </motion.div>
 
             {/* Bottom Row: Desktop Horizontal Nav Links - Glassmorphism Blue Cylinder/Pill */}
-            <div className="hidden xl:flex items-center justify-center gap-x-8 gap-y-2 flex-wrap w-full bg-[#002855]/85 backdrop-blur-lg border border-white/10 py-3.5 px-8 transition-all duration-700 shadow-lg rounded-full">
+            <div className="hidden xl:flex items-center justify-center gap-x-6 gap-y-2 flex-wrap w-full bg-[#002855]/85 backdrop-blur-lg border border-white/10 py-5 px-10 transition-all duration-700 shadow-lg rounded-full">
                {navLinks.map((l, index) => {
                   const isExternal = l.href.startsWith("http://") || l.href.startsWith("https://");
                   return isExternal ? (
@@ -102,7 +102,7 @@ const Navbar = () => {
                         href={l.href}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-white/90 hover:text-white font-bold tracking-[0.3em] text-[11px] uppercase transition-all duration-500 relative group"
+                        className="text-white/95 hover:text-white font-bold tracking-[0.18em] text-[13px] uppercase transition-all duration-500 relative group"
                      >
                         {l.label}
                         <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-0 h-[2px] transition-all duration-500 group-hover:w-full bg-white"></span>
@@ -114,7 +114,7 @@ const Navbar = () => {
                         transition={{ duration: 1.2, delay: 0.2 + (index * 0.05), ease: [0.16, 1, 0.3, 1] }}
                         key={l.label}
                         to={l.href}
-                        className="text-white/90 hover:text-white font-bold tracking-[0.3em] text-[11px] uppercase transition-all duration-500 relative group"
+                        className="text-white/95 hover:text-white font-bold tracking-[0.18em] text-[13px] uppercase transition-all duration-500 relative group"
                       >
                         {l.label}
                         <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-0 h-[2px] transition-all duration-500 group-hover:w-full bg-white"></span>
@@ -126,7 +126,7 @@ const Navbar = () => {
                      animate={{ opacity: 1, y: 0 }}
                      transition={{ duration: 1.2, delay: 0.2 + (navLinks.length * 0.05), ease: [0.16, 1, 0.3, 1] }}
                      href="https://vtools.vtools.ieee.org/" target="_blank"
-                     className="text-white/90 hover:text-white font-bold tracking-[0.3em] text-[11px] uppercase transition-all duration-500 relative group"
+                     className="text-white/95 hover:text-white font-bold tracking-[0.18em] text-[13px] uppercase transition-all duration-500 relative group"
                   >
                      VTOOLS
                      <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-0 h-[2px] transition-all duration-500 group-hover:w-full bg-white"></span>
