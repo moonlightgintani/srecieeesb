@@ -65,7 +65,7 @@ const Navbar = () => {
                </button>
             </div>
 
-            {/* Top Row: Logos with ultra-smooth cinematic hide animation - White Background */}
+            {/* Top Row: Logos with ultra-smooth cinematic hide animation - Glassmorphism Background */}
             <motion.div 
                initial={false}
                animate={{ 
@@ -74,7 +74,7 @@ const Navbar = () => {
                   scale: hideLogos ? 0.95 : 1
                }}
                transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-               className="w-full bg-white origin-top relative z-50 overflow-hidden shadow-md"
+               className="w-full bg-white/70 backdrop-blur-lg border-b border-white/20 origin-top relative z-50 overflow-hidden shadow-md"
             >
                <div className="flex justify-center items-center xl:grid xl:grid-cols-3 w-full px-6 sm:px-16 xl:px-24 py-3 md:py-4 gap-4 sm:gap-8 xl:gap-8">
                   <div className="flex justify-center items-center">
@@ -89,8 +89,8 @@ const Navbar = () => {
                </div>
             </motion.div>
 
-            {/* Bottom Row: Desktop Horizontal Nav Links - Blue Background */}
-            <div className="hidden xl:flex items-center justify-center gap-x-8 gap-y-2 flex-wrap w-full bg-[#002855] py-4 px-4 transition-all duration-700 shadow-inner">
+            {/* Bottom Row: Desktop Horizontal Nav Links - Glassmorphism Blue Background */}
+            <div className="hidden xl:flex items-center justify-center gap-x-8 gap-y-2 flex-wrap w-full bg-[#002855]/75 backdrop-blur-lg border-t border-b border-white/10 py-4 px-4 transition-all duration-700 shadow-inner">
                {navLinks.map((l, index) => {
                   const isExternal = l.href.startsWith("http://") || l.href.startsWith("https://");
                   return isExternal ? (
