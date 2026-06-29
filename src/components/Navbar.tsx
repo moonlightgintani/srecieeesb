@@ -51,7 +51,7 @@ const Navbar = () => {
    return (
      <>
       {/* Top Navbar */}
-      <nav className="fixed top-4 left-1/2 -translate-x-1/2 w-[95%] lg:w-[90%] max-w-7xl z-50 transition-all duration-500 ease-out">
+      <nav className="fixed top-4 left-1/2 -translate-x-1/2 w-[95%] lg:w-[90%] max-w-7xl z-50">
          
          <div className="w-full flex flex-col items-center justify-center gap-3">
             
@@ -74,7 +74,7 @@ const Navbar = () => {
                   scale: hideLogos ? 0.95 : 1
                }}
                transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-               className="w-full bg-white/80 backdrop-blur-lg border border-white/40 origin-top relative z-50 overflow-hidden shadow-lg rounded-3xl"
+               className="w-full bg-white/70 backdrop-blur-xl border border-white/30 origin-top relative z-50 overflow-hidden shadow-lg rounded-3xl"
             >
                <div className="flex justify-center items-center xl:grid xl:grid-cols-3 w-full px-6 sm:px-16 xl:px-24 py-3 md:py-4 gap-4 sm:gap-8 xl:gap-8">
                   <div className="flex justify-center items-center">
@@ -90,7 +90,7 @@ const Navbar = () => {
             </motion.div>
 
             {/* Bottom Row: Desktop Horizontal Nav Links - Glassmorphism Blue Cylinder/Pill */}
-            <div className="hidden xl:flex items-center justify-center gap-x-6 gap-y-2 flex-wrap w-full bg-[#002855]/85 backdrop-blur-lg border border-white/10 py-5 px-10 transition-all duration-700 shadow-lg rounded-full">
+            <div className="hidden xl:flex items-center justify-center gap-x-6 gap-y-2 flex-wrap w-full bg-[#002855]/60 backdrop-blur-xl border border-white/10 py-5 px-10 transition-all duration-500 shadow-lg rounded-full">
                {navLinks.map((l, index) => {
                   const isExternal = l.href.startsWith("http://") || l.href.startsWith("https://");
                   return isExternal ? (
