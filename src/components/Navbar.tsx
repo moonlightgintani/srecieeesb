@@ -90,7 +90,7 @@ const Navbar = () => {
             </motion.div>
 
             {/* Bottom Row: Desktop Horizontal Nav Links - Glassmorphism Blue Cylinder/Pill */}
-            <div className="hidden xl:flex items-center justify-center gap-x-6 gap-y-2 flex-wrap w-full bg-[#002855]/60 backdrop-blur-xl border border-white/10 py-5 px-10 transition-all duration-500 shadow-lg rounded-full">
+            <div className="hidden xl:flex items-center justify-center gap-x-6 gap-y-2 flex-wrap w-full backdrop-blur-2xl border py-5 px-10 transition-all duration-500 rounded-full relative overflow-hidden" style={{ background: "linear-gradient(135deg, rgba(37,99,235,0.55) 0%, rgba(59,130,246,0.40) 50%, rgba(99,102,241,0.45) 100%)", borderColor: "rgba(147,197,253,0.35)", boxShadow: "0 8px 32px rgba(37,99,235,0.35), 0 2px 8px rgba(59,130,246,0.25), inset 0 1px 0 rgba(255,255,255,0.25)" }}>
                {navLinks.map((l, index) => {
                   const isExternal = l.href.startsWith("http://") || l.href.startsWith("https://");
                   return isExternal ? (
