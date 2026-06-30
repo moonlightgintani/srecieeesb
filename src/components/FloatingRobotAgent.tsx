@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Bot, X, Sparkles, Send, Globe, ArrowRight, Activity } from "lucide-react";
-import { Link } from "react-router-dom";
+import { X, Sparkles, Send } from "lucide-react";
 import robotGif from "@/assets/robot.gif";
 
 interface ChatMessage {
