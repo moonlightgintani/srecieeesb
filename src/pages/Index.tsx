@@ -1,11 +1,8 @@
 import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
-import StatsSection from "@/components/StatsSection";
-import ImpactSection from "@/components/ImpactSection";
 import BenefitsSection from "@/components/BenefitsSection";
 import LatestHighlightsSection from "@/components/LatestHighlightsSection";
 import CollegeAboutSection from "@/components/CollegeAboutSection";
-import AboutSection from "@/components/AboutSection";
 import SocietiesSection from "@/components/SocietiesSection";
 import TestimonialsMarqueeSection from "@/components/TestimonialsMarqueeSection";
 import Footer from "@/components/Footer";
@@ -66,25 +63,11 @@ const Index = () => {
         {/* Content Wrapper */}
         <div className="relative z-10 w-full bg-white border-t border-slate-200">
           
-          <div className="max-w-[1400px] mx-auto px-6 py-2 md:py-3">
+          {/* Unified Bento Grid Highlights & Legacy */}
+          <div className="border-b border-slate-200 bg-[#fafafa]">
             <FadeInSection>
-              <div className="border-b border-slate-100">
-                <StatsSection />
-              </div>
+              <BenefitsSection />
             </FadeInSection>
-          </div>
-
-          {/* Symmetrical Split Section */}
-          <div className="border-t border-slate-200 bg-[#fafafa] py-2 md:py-4">
-            <div className="max-w-[1400px] mx-auto px-6 flex flex-col gap-6 md:gap-8">
-              <FadeInSection>
-                <ImpactSection />
-              </FadeInSection>
-
-              <FadeInSection delay={0.2}>
-                <BenefitsSection />
-              </FadeInSection>
-            </div>
           </div>
 
           <div className="border-t border-slate-200 bg-white">
@@ -98,10 +81,7 @@ const Index = () => {
           <div className="border-t border-slate-200 bg-[#fafafa]">
             <div className="max-w-[1400px] mx-auto px-6 py-4 md:py-6">
               <FadeInSection>
-                <div className="flex flex-col gap-6 items-stretch">
-                  <CollegeAboutSection />
-                  <AboutSection showStats={false} />
-                </div>
+                <CollegeAboutSection />
               </FadeInSection>
             </div>
           </div>

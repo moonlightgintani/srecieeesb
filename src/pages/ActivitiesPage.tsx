@@ -27,7 +27,7 @@ type ActivityItem = {
   image_url?: string | null;
 };
 
-const fallbackImage = "https://placehold.co/800x500?text=No+Image";
+const fallbackImage = "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?q=80&w=800&auto=format&fit=crop";
 
 const getValidImageUrl = (url?: string | null) => {
   if (!url || !url.trim()) return fallbackImage;
@@ -68,25 +68,25 @@ const StatsGraphicModule = ({ activities }: { activities: ActivityItem[] }) => {
         const y = parseYearFromDate(a.date);
         if(y !== "Unknown") counts[y] = (counts[y] || 0) + 1;
      });
-     return Object.entries(counts).sort((a,b) => Number(a[0]) - Number(b[0])).slice(-8); 
+     return Object.entries(counts).sort((a,b) => Number(a[0]) - Number(b[0])).slice(-5); 
   }, [activities]);
 
   const max = Math.max(...chartData.map(d => d[1]), 1);
 
   return (
-     <div className="bg-white border border-slate-200 p-5 rounded-xl shadow-sm hidden lg:flex flex-col gap-4 shrink-0 w-[280px]">
+     <div className="bg-slate-50 border border-slate-100 p-5 rounded-2xl flex flex-col gap-4">
         <div className="flex items-center justify-between">
-           <div className="flex items-center gap-2 text-slate-700 font-semibold text-xs tracking-wide">
-             <BarChart3 className="h-4 w-4 text-slate-400" /> Event Activity Trend
+           <div className="flex items-center gap-2 text-slate-700 font-bold text-xs tracking-wide">
+             <BarChart3 className="h-4 w-4 text-blue-500" /> Event Activity Trend
            </div>
         </div>
-        <div className="flex items-end justify-between h-20 gap-1.5 pt-2">
+        <div className="flex items-end justify-between h-20 gap-2 pt-2">
            {chartData.map(([year, count]) => (
               <div key={year} className="flex flex-col items-center gap-1.5 w-full relative group">
-                 <div className="absolute -top-6 bg-slate-800 text-white text-[10px] rounded px-1.5 py-0.5 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+                 <div className="absolute -top-6 bg-slate-800 text-white text-[9px] rounded px-1.5 py-0.5 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
                    {count} Events
                  </div>
-                 <div className="w-full bg-slate-100 rounded-[2px] overflow-hidden flex items-end h-full">
+                 <div className="w-full bg-slate-200/60 rounded-md overflow-hidden flex items-end h-full">
                     <motion.div 
                        initial={{ height: 0 }}
                        animate={{ height: `${(count / max) * 100}%` }}
@@ -94,7 +94,7 @@ const StatsGraphicModule = ({ activities }: { activities: ActivityItem[] }) => {
                        className="w-full bg-blue-600 group-hover:bg-blue-500 transition-colors"
                     />
                  </div>
-                 <span className="text-[9px] font-medium text-slate-400">{year.slice(2)}</span>
+                 <span className="text-[10px] font-bold text-slate-400">{year}</span>
               </div>
            ))}
         </div>
@@ -110,32 +110,32 @@ const ActivityCard = ({ item, onClick }: { item: ActivityItem; onClick: () => vo
   return (
     <div
       onClick={onClick}
-      className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-md hover:border-slate-300 hover:-translate-y-0.5 transition-all cursor-pointer flex flex-col h-[340px] group"
+      className="bg-white rounded-2xl border border-slate-100 overflow-hidden shadow-sm hover:shadow-md hover:scale-[1.01] transition-all cursor-pointer flex flex-col h-[340px] group text-left"
     >
-      <div className="relative h-44 w-full bg-slate-100 border-b border-slate-100 shrink-0">
+      <div className="relative h-44 w-full bg-slate-100 border-b border-slate-55 shrink-0">
         <img 
           src={imgSrc} 
           alt={item.event}
-          className="w-full h-full object-cover transition-opacity duration-500 group-hover:opacity-95" 
+          className="w-full h-full object-cover transition-opacity duration-550 group-hover:opacity-95" 
           onError={() => setImgSrc(fallbackImage)}
         />
-        <div className="absolute top-2 left-2 bg-white text-slate-800 text-[9px] font-bold px-2 py-1 rounded shadow-sm uppercase tracking-wider border border-slate-100/50">
+        <div className="absolute top-3 left-3 bg-white/95 backdrop-blur text-slate-800 text-[10px] font-extrabold px-2.5 py-1 rounded-full shadow-sm uppercase tracking-wider border border-slate-100/50">
           {parseYearFromDate(item.date)}
         </div>
       </div>
-      <div className="p-4 flex flex-col flex-1">
-        <h3 className="font-semibold text-slate-900 text-[15px] leading-snug line-clamp-2 mb-3">
+      <div className="p-5 flex flex-col flex-1">
+        <h3 className="font-bold text-slate-800 text-[15px] leading-snug line-clamp-2 mb-3 group-hover:text-blue-600 transition-colors">
           {item.event}
         </h3>
-        <div className="space-y-1.5 mb-auto text-[13px] text-slate-500">
+        <div className="space-y-2 mb-auto text-[13px] text-slate-550">
            <div className="flex items-center gap-2"><CalendarDays className="h-3.5 w-3.5 text-slate-400 shrink-0" /> <span className="truncate">{item.date || "TBD"}</span></div>
            <div className="flex items-center gap-2"><UserRound className="h-3.5 w-3.5 text-slate-400 shrink-0" /> <span className="truncate">{item.chief_guest || "No Guest Provided"}</span></div>
         </div>
         <div className="pt-3 mt-3 border-t border-slate-100 flex items-center justify-between text-xs">
-           <div className="flex items-center gap-1.5 font-medium text-slate-700">
-             <Users className="h-3.5 w-3.5 text-slate-400" /> {participantCount}
+           <div className="flex items-center gap-1.5 font-bold text-slate-700">
+             <Users className="h-3.5 w-3.5 text-blue-500" /> {participantCount}
            </div>
-           <span className="text-[10px] text-slate-400 font-medium">#{item.s_no || item.id}</span>
+           <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">#{item.s_no || item.id}</span>
         </div>
       </div>
     </div>
@@ -236,186 +236,198 @@ const ActivitiesPage = () => {
     <div className="min-h-screen bg-slate-50 flex flex-col font-sans">
       <Navbar />
       
-      <div className="bg-white border-b border-slate-200 pt-10 pb-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8">
-            <div className="max-w-2xl">
-              <h1 className="text-3xl font-bold text-slate-900 mb-2">Event Directory</h1>
-              <p className="text-slate-600 text-sm md:text-base leading-relaxed">
-                Log and analyze official technical programs, seminars, and organizational activities.
-              </p>
-            </div>
 
-            <div className="flex flex-col sm:flex-row sm:items-end gap-6 sm:gap-10 shrink-0">
-                <div className="flex gap-10 bg-white border border-slate-200 p-5 rounded-xl shadow-sm">
-                  <div>
-                    <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wide mb-1 flex items-center gap-1.5"><CalendarDays className="h-3.5 w-3.5" /> Operations</p>
-                    <p className="text-2xl font-bold text-slate-900">{activities.length}</p>
-                  </div>
-                  <div className="w-px bg-slate-200"></div>
-                  <div>
-                    <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wide mb-1 flex items-center gap-1.5"><Users className="h-3.5 w-3.5" /> Total Reach</p>
-                    <p className="text-2xl font-bold text-slate-900">{totalParticipants}</p>
-                  </div>
-                </div>
-
-                {activities.length > 0 && <StatsGraphicModule activities={activities} />}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
-        
-        <div className="bg-white border border-slate-200 rounded-xl p-2 shadow-sm mb-8 sticky top-[72px] z-30">
-          <div className="flex flex-col md:flex-row gap-2">
-             <div className="relative flex-1">
-               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-               <input
-                  type="text"
-                  placeholder="Search events, guests, or IDs..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full bg-slate-50 hover:bg-slate-100 focus:bg-white border border-slate-200 rounded-lg py-2 pl-9 pr-3 text-sm text-slate-900 placeholder-slate-500 outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
-               />
-             </div>
-             
-             <div className="flex min-w-0 gap-2">
-               <div className="relative shrink-0 hidden sm:block">
-                  <Filter className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
-                  <select
-                    aria-label="Filter by year"
-                    value={selectedYear}
-                    onChange={(e) => setSelectedYear(e.target.value)}
-                    className="appearance-none bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-lg py-2 pl-9 pr-8 text-sm text-slate-700 outline-none cursor-pointer focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all font-medium"
-                  >
-                    {years.map(y => <option key={y} value={y}>{y === "All" ? "Filter: All Years" : `Year: ${y}`}</option>)}
-                  </select>
-               </div>
-
-               <div className="relative shrink-0 hidden sm:block">
-                  <ArrowUpDown className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
-                  <select
-                    aria-label="Sort activities"
-                    value={sortBy}
-                    onChange={(e) => setSortBy(e.target.value as "latest" | "oldest" | "s_no" | "participants" | "event")}
-                    className="appearance-none bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-lg py-2 pl-9 pr-8 text-sm text-slate-700 outline-none cursor-pointer focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all font-medium"
-                  >
-                    <option value="latest">Sort: Latest</option>
-                    <option value="oldest">Sort: Oldest</option>
-                    <option value="participants">Sort: Highest Reach</option>
-                    <option value="event">Sort: Name (A-Z)</option>
-                    <option value="s_no">Sort: Record ID</option>
-                  </select>
-               </div>
-
-               {(searchTerm || selectedYear !== "All" || sortBy !== "latest") && (
-                 <button
-                   onClick={() => { setSelectedYear("All"); setSearchTerm(""); setSortBy("latest"); }}
-                   className="px-3 py-2 text-slate-500 hover:text-red-700 hover:bg-red-50 border border-slate-200 hover:border-red-200 rounded-lg transition-colors flex items-center justify-center gap-1.5 text-sm font-medium shrink-0"
-                 >
-                   <X className="h-4 w-4" /> <span className="hidden sm:inline">Clear</span>
-                 </button>
-               )}
-             </div>
-          </div>
-        </div>
-
-        {featuredActivity && (
-          <div 
-            onClick={() => setSelectedModalItem(featuredActivity)}
-            className="mb-8 bg-white border border-slate-200 hover:border-blue-300 rounded-xl p-5 md:p-6 flex flex-col md:flex-row md:items-center justify-between gap-6 cursor-pointer shadow-sm group transition-all relative overflow-hidden"
-          >
-            <div className="absolute left-0 top-0 bottom-0 w-1 bg-blue-600 transition-all group-hover:w-1.5"></div>
+      <main className="flex-1 max-w-[1400px] mx-auto px-6 md:px-12 py-8 w-full">
+         <div className="grid lg:grid-cols-12 gap-8 md:gap-12 items-start">
             
-            <div className="flex-1 pl-2">
-              <div className="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1.5 flex items-center gap-1.5">
-                 <Star className="h-3 w-3 text-slate-400" /> Featured Event
-              </div>
-              <h2 className="text-lg font-semibold text-slate-900 group-hover:text-blue-600 transition-colors">
-                {featuredActivity.event}
-              </h2>
-            </div>
-            
-            <div className="flex items-center gap-6 md:gap-10 border-t md:border-t-0 md:border-l border-slate-100 pt-4 md:pt-0 md:pl-8 text-sm w-full md:w-auto">
-               <div className="flex flex-col">
-                  <span className="text-[11px] uppercase tracking-wider text-slate-500 mb-0.5">Attendees</span>
-                  <span className="font-semibold text-slate-900">{getParticipantCount(featuredActivity.participants)}</span>
+            {/* LEFT COLUMN: Sticky Filter & Analytics Sidebar */}
+            <aside className="lg:col-span-4 lg:sticky lg:top-48 flex flex-col gap-6 text-left">
+               <div>
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 border border-blue-100 text-blue-600 font-bold text-xs tracking-wider uppercase mb-4 shadow-sm">
+                     <Activity size={12} className="animate-pulse" />
+                     Event Archive
+                  </span>
+                  <h1 className="text-4xl font-serif font-black text-slate-900 mb-2 leading-tight">Event Directory</h1>
+                  <p className="text-slate-505 text-sm leading-relaxed mb-4">
+                     Log and analyze official technical programs, seminars, and organizational activities.
+                  </p>
                </div>
-               <div className="flex flex-col">
-                  <span className="text-[11px] uppercase tracking-wider text-slate-500 mb-0.5">Date Organized</span>
-                  <span className="font-semibold text-slate-900">{featuredActivity.date || "-"}</span>
+
+               {/* Metric Cards Row */}
+               <div className="grid grid-cols-2 gap-4 bg-white border border-slate-100 p-6 rounded-2xl shadow-sm">
+                  <div>
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1 flex items-center gap-1"><CalendarDays className="h-3 w-3" /> Operations</p>
+                    <p className="text-2xl font-black text-slate-800">{activities.length}</p>
+                  </div>
+                  <div className="border-l border-slate-100 pl-4">
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1 flex items-center gap-1"><Users className="h-3 w-3" /> Reach</p>
+                    <p className="text-2xl font-black text-slate-800">{totalParticipants}</p>
+                  </div>
                </div>
-            </div>
-          </div>
-        )}
 
-        {isLoading && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-            {[...Array(8)].map((_, i) => (
-              <div key={i} className="bg-white border border-slate-200 rounded-xl h-[340px] animate-pulse flex flex-col overflow-hidden shadow-sm">
-                <div className="h-44 bg-slate-100 border-b border-slate-100 shrink-0" />
-                <div className="p-4 flex flex-col flex-1">
-                  <div className="h-4 w-3/4 bg-slate-100 rounded mb-4" />
-                  <div className="h-3 w-1/2 bg-slate-100 rounded mb-2" />
-                  <div className="h-3 w-2/3 bg-slate-100 rounded mb-auto" />
-                  <div className="h-3 w-1/3 bg-slate-100 rounded mt-4" />
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {isError && (
-          <div className="bg-red-50 border border-red-200 rounded-xl p-8 text-center mt-6">
-            <h3 className="text-sm font-semibold text-red-800">Unable to establish records connection</h3>
-            <p className="mt-1 text-xs text-red-600">{(error as Error)?.message || "Verify your connection parameters."}</p>
-          </div>
-        )}
-
-        {!isLoading && !isError && filteredActivities.length === 0 && (
-          <div className="bg-white border border-slate-200 rounded-xl p-16 text-center shadow-sm flex flex-col items-center">
-            <div className="w-12 h-12 bg-slate-50 flex items-center justify-center rounded-full mb-4 border border-slate-100">
-              <Search className="h-5 w-5 text-slate-400" />
-            </div>
-            <h3 className="text-sm font-semibold text-slate-900">No records found</h3>
-            <p className="text-sm text-slate-500 mt-1 max-w-sm mb-6">
-              There are no matching activities mapped to your current filter constraints.
-            </p>
-            <button 
-              onClick={() => { setSelectedYear("All"); setSearchTerm(""); setSortBy("latest"); }}
-              className="px-4 py-2 bg-white border border-slate-200 text-slate-700 rounded-lg text-sm font-medium hover:bg-slate-50 transition shadow-sm"
-            >
-              Clear Requirements
-            </button>
-          </div>
-        )}
-
-        {!isLoading && !isError && filteredActivities.length > 0 && (
-          <div className="flex flex-col gap-10">
-            {groupKeys.map((yearKey) => (
-              <div key={yearKey}>
-                <div className="flex items-center gap-4 mb-5">
-                  <h2 className="text-lg font-bold text-slate-900">{yearKey}</h2>
-                  <div className="h-px bg-slate-200 flex-1"></div>
-                </div>
-                
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-                  {groupedActivities[yearKey].map((item) => (
-                    <ActivityCard 
-                      key={item.id} 
-                      item={item} 
-                      onClick={() => setSelectedModalItem(item)} 
+               {/* Filters Panel */}
+               <div className="bg-white border border-slate-100 p-6 rounded-2xl shadow-sm space-y-4">
+                  
+                  {/* Search */}
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                    <input
+                       type="text"
+                       placeholder="Search events, guests..."
+                       value={searchTerm}
+                       onChange={(e) => setSearchTerm(e.target.value)}
+                       className="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 pl-10 pr-4 text-sm text-slate-905 placeholder-slate-400 focus:bg-white outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all font-medium"
                     />
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
+                  </div>
+
+                  {/* Year selector */}
+                  <div className="relative">
+                     <Filter className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
+                     <select
+                       aria-label="Filter by year"
+                       value={selectedYear}
+                       onChange={(e) => setSelectedYear(e.target.value)}
+                       className="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 pl-10 pr-8 text-sm text-slate-700 outline-none cursor-pointer focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all font-bold"
+                     >
+                       {years.map(y => <option key={y} value={y}>{y === "All" ? "Filter: All Years" : `Year: ${y}`}</option>)}
+                     </select>
+                  </div>
+
+                  {/* Sort selector */}
+                  <div className="relative">
+                     <ArrowUpDown className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
+                     <select
+                       aria-label="Sort activities"
+                       value={sortBy}
+                       onChange={(e) => setSortBy(e.target.value as "latest" | "oldest" | "s_no" | "participants" | "event")}
+                       className="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 pl-10 pr-8 text-sm text-slate-700 outline-none cursor-pointer focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all font-bold"
+                     >
+                       <option value="latest">Sort: Latest</option>
+                       <option value="oldest">Sort: Oldest</option>
+                       <option value="participants">Sort: Highest Reach</option>
+                       <option value="event">Sort: Name (A-Z)</option>
+                       <option value="s_no">Sort: Record ID</option>
+                     </select>
+                  </div>
+
+                  {/* Clear Button */}
+                  {(searchTerm || selectedYear !== "All" || sortBy !== "latest") && (
+                    <button
+                      onClick={() => { setSelectedYear("All"); setSearchTerm(""); setSortBy("latest"); }}
+                      className="w-full py-2.5 text-red-600 hover:text-red-700 hover:bg-red-50 border border-red-100 rounded-xl transition-colors flex items-center justify-center gap-1.5 text-sm font-bold"
+                    >
+                      <X className="h-4 w-4" /> Clear All Filters
+                    </button>
+                  )}
+               </div>
+
+               {/* Chart Trends Module */}
+               {activities.length > 0 && <StatsGraphicModule activities={activities} />}
+
+            </aside>
+
+            {/* RIGHT COLUMN: Event Card Feed */}
+            <div className="lg:col-span-8 flex flex-col gap-6 text-left">
+               
+               {/* Featured Highlight Card */}
+               {featuredActivity && (
+                 <div 
+                   onClick={() => setSelectedModalItem(featuredActivity)}
+                   className="bg-white border border-slate-100 hover:border-blue-300 rounded-3xl p-6 md:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6 cursor-pointer shadow-sm hover:shadow-md transition-all relative overflow-hidden text-left"
+                 >
+                   <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-blue-600"></div>
+                   
+                   <div className="flex-1 pl-2">
+                     <span className="text-[10px] font-bold uppercase tracking-widest text-blue-600 mb-2 flex items-center gap-1.5">
+                        <Star className="h-3.5 w-3.5 fill-blue-500 text-blue-500" /> Featured Event
+                     </span>
+                     <h2 className="text-xl font-serif font-bold text-slate-800 mb-2">
+                       {featuredActivity.event}
+                     </h2>
+                     <p className="text-slate-500 text-xs mt-1">
+                        Chief Guest: {featuredActivity.chief_guest || "No Guest Provided"}
+                     </p>
+                   </div>
+                   
+                   <div className="flex items-center gap-6 border-t md:border-t-0 md:border-l border-slate-100 pt-4 md:pt-0 md:pl-8 text-xs shrink-0 w-full md:w-auto">
+                      <div className="flex flex-col">
+                         <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Reach</span>
+                         <span className="font-extrabold text-slate-800 text-base">{getParticipantCount(featuredActivity.participants)}</span>
+                      </div>
+                      <div className="flex flex-col">
+                         <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Date</span>
+                         <span className="font-extrabold text-slate-800 text-base">{featuredActivity.date || "-"}</span>
+                      </div>
+                   </div>
+                 </div>
+               )}
+
+               {/* Grid Feed Section */}
+               {isLoading && (
+                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                   {[...Array(6)].map((_, i) => (
+                     <div key={i} className="bg-white border border-slate-100 rounded-2xl h-[340px] animate-pulse flex flex-col overflow-hidden shadow-sm">
+                       <div className="h-44 bg-slate-100 border-b shrink-0" />
+                       <div className="p-5 flex flex-col flex-1">
+                         <div className="h-4 w-3/4 bg-slate-100 rounded mb-4" />
+                         <div className="h-3.5 w-1/2 bg-slate-100 rounded mb-2" />
+                         <div className="h-3.5 w-2/3 bg-slate-100 rounded mb-auto" />
+                       </div>
+                     </div>
+                   ))}
+                 </div>
+               )}
+
+               {isError && (
+                 <div className="bg-red-50 border border-red-200 rounded-2xl p-10 text-center">
+                   <h3 className="text-sm font-bold text-red-800">Unable to establish records connection</h3>
+                   <p className="mt-1 text-xs text-red-600">{(error as Error)?.message || "Verify your connection parameters."}</p>
+                 </div>
+               )}
+
+               {!isLoading && !isError && filteredActivities.length === 0 && (
+                 <div className="bg-white border border-slate-100 rounded-3xl p-16 text-center shadow-sm flex flex-col items-center">
+                   <div className="w-12 h-12 bg-slate-50 flex items-center justify-center rounded-full mb-4 border border-slate-100">
+                     <Search className="h-5 w-5 text-slate-400" />
+                   </div>
+                   <h3 className="text-base font-bold text-slate-800">No records found</h3>
+                   <p className="text-xs text-slate-500 mt-1 max-w-sm mb-6">
+                     There are no matching activities mapped to your current filter constraints.
+                   </p>
+                 </div>
+               )}
+
+               {!isLoading && !isError && filteredActivities.length > 0 && (
+                 <div className="flex flex-col gap-10">
+                   {groupKeys.map((yearKey) => (
+                     <div key={yearKey}>
+                       <div className="flex items-center gap-4 mb-6">
+                         <h2 className="text-xl font-serif font-black text-slate-800">{yearKey}</h2>
+                         <div className="h-px bg-slate-200 flex-1"></div>
+                       </div>
+                       
+                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                         {groupedActivities[yearKey].map((item) => (
+                           <ActivityCard 
+                             key={item.id} 
+                             item={item} 
+                             onClick={() => setSelectedModalItem(item)} 
+                           />
+                         ))}
+                       </div>
+                     </div>
+                   ))}
+                 </div>
+               )}
+
+            </div>
+
+         </div>
       </main>
+      
       <Footer />
 
+      {/* Detail Overlay Modal */}
       <AnimatePresence>
         {selectedModalItem && (
           <>
@@ -432,46 +444,47 @@ const ActivitiesPage = () => {
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, y: 15 }}
                 transition={{ duration: 0.2 }}
-                className="w-full max-w-4xl max-h-full overflow-y-auto pointer-events-auto"
+                className="w-full max-w-2xl max-h-full overflow-y-auto pointer-events-auto"
               >
-                <div className="bg-white rounded-xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col lg:flex-row w-full">
-                  <div className="lg:w-1/2 relative bg-slate-100 border-b lg:border-b-0 lg:border-r border-slate-200 min-h-[250px] lg:min-h-full">
+                <div className="bg-white rounded-3xl shadow-2xl border border-slate-100 overflow-hidden flex flex-col w-full text-left">
+                  <div className="relative h-64 bg-slate-100 border-b border-slate-150">
                      <img 
                        src={getValidImageUrl(selectedModalItem.image_url)} 
                        alt={selectedModalItem.event}
                        className="absolute inset-0 w-full h-full object-cover" 
                      />
+                     <button 
+                        aria-label="Close modal"
+                        onClick={() => setSelectedModalItem(null)} 
+                        className="absolute top-4 right-4 text-slate-800 bg-white/90 backdrop-blur hover:bg-white p-2 rounded-full border border-slate-200 transition shadow-sm pointer-events-auto"
+                     >
+                        <X className="h-4 w-4" />
+                     </button>
                   </div>
-                  <div className="lg:w-1/2 p-6 lg:p-10 flex flex-col bg-white">
-                     <div className="flex items-center justify-between mb-6">
-                        <span className="bg-slate-50 text-slate-600 text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded border border-slate-200">
+                  
+                  <div className="p-6 md:p-8 flex flex-col bg-white">
+                     <div className="flex items-center justify-between mb-4">
+                        <span className="bg-slate-55 text-slate-550 text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full border border-slate-200/80">
                           Record ID: {selectedModalItem.s_no || selectedModalItem.id}
                         </span>
-                        <button 
-                           aria-label="Close modal"
-                           onClick={() => setSelectedModalItem(null)} 
-                           className="text-slate-400 hover:text-slate-900 bg-slate-50 hover:bg-slate-100 p-1.5 rounded-lg border border-transparent hover:border-slate-200 transition-all"
-                        >
-                           <X className="h-4 w-4" />
-                        </button>
                      </div>
                      
-                     <h2 className="text-xl font-bold text-slate-900 leading-snug mb-8">
+                     <h2 className="text-xl md:text-2xl font-serif font-bold text-slate-900 leading-snug mb-6">
                         {selectedModalItem.event}
                      </h2>
                      
-                     <div className="space-y-0 text-sm">
-                       <div className="grid grid-cols-[120px_1fr] items-baseline border-b border-slate-100 pb-3 mb-3">
-                         <span className="font-medium text-slate-500">Organized</span>
-                         <span className="text-slate-900 font-medium">{selectedModalItem.date || "-"}</span>
+                     <div className="space-y-0.5 text-sm">
+                       <div className="grid grid-cols-[140px_1fr] items-baseline border-b border-slate-100 py-3">
+                         <span className="font-bold text-slate-400 uppercase tracking-wider text-[10px]">Organized</span>
+                         <span className="text-slate-800 font-bold">{selectedModalItem.date || "-"}</span>
                        </div>
-                       <div className="grid grid-cols-[120px_1fr] items-baseline border-b border-slate-100 pb-3 mb-3">
-                         <span className="font-medium text-slate-500">Representative</span>
-                         <span className="text-slate-900 font-medium">{selectedModalItem.chief_guest || "-"}</span>
+                       <div className="grid grid-cols-[140px_1fr] items-baseline border-b border-slate-100 py-3">
+                         <span className="font-bold text-slate-400 uppercase tracking-wider text-[10px]">Chief Guest</span>
+                         <span className="text-slate-800 font-bold">{selectedModalItem.chief_guest || "-"}</span>
                        </div>
-                       <div className="grid grid-cols-[120px_1fr] items-baseline border-b border-slate-100 pb-3 mb-3">
-                         <span className="font-medium text-slate-500">Logging</span>
-                         <span className="text-slate-900 font-medium">{getParticipantCount(selectedModalItem.participants)} Participants</span>
+                       <div className="grid grid-cols-[140px_1fr] items-baseline py-3">
+                         <span className="font-bold text-slate-400 uppercase tracking-wider text-[10px]">Registrations</span>
+                         <span className="text-slate-800 font-bold">{getParticipantCount(selectedModalItem.participants)} Participants</span>
                        </div>
                      </div>
                   </div>

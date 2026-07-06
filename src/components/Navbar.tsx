@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { X, Menu } from "lucide-react";
+import { X, Menu, Network } from "lucide-react";
 import ieeeLogo from "@/assets/ieee-logo.png";
 import srecLogo from "@/assets/srec-logo.png";
 import snrLogo from "@/assets/snr-trust-logo.png";
@@ -67,32 +67,41 @@ const Navbar = () => {
                className="w-full bg-white/70 backdrop-blur-xl border-b border-white/30 origin-top relative z-50 overflow-hidden shadow-md"
             >
                 <div className="w-full px-3 sm:px-8 xl:px-12">
-                   <div className="relative flex flex-row justify-center xl:justify-between items-center w-full py-3 md:py-4 gap-2 sm:gap-6 xl:gap-0">
+                   <div className="relative flex flex-row justify-center xl:justify-between items-center w-full py-4 md:py-6 gap-3 sm:gap-8 xl:gap-0">
                       <div className="flex justify-center items-center">
-                         <img src={srecLogo} alt="SREC" className="h-24 sm:h-28 md:h-32 lg:h-32 w-auto object-contain flex-shrink-0" />
+                         <img src={srecLogo} alt="SREC" className="h-28 sm:h-32 md:h-36 lg:h-40 w-auto object-contain flex-shrink-0" />
                       </div>
                       <div className="flex justify-center items-center xl:absolute xl:left-1/2 xl:-translate-x-1/2">
-                         <img src={ieeeLogo} alt="IEEE" className="h-24 sm:h-28 md:h-32 lg:h-32 w-auto object-contain flex-shrink-0" />
+                         <img src={ieeeLogo} alt="IEEE" className="h-28 sm:h-32 md:h-36 lg:h-40 w-auto object-contain flex-shrink-0" />
                       </div>
                       <div className="flex justify-center items-center">
-                         <img src={snrLogo} alt="SNR Trust" className="h-24 sm:h-28 md:h-32 lg:h-32 w-auto object-contain flex-shrink-0" />
+                         <img src={snrLogo} alt="SNR Trust" className="h-28 sm:h-32 md:h-36 lg:h-40 w-auto object-contain flex-shrink-0" />
                       </div>
                    </div>
                 </div>
             </motion.div>
 
-            {/* Mobile Hamburger Icon (Aligned left below logos on mobile/tablet) */}
-            <div className="xl:hidden flex justify-start w-full px-6 sm:px-12 mt-3 z-[70]">
+            {/* Mobile Hamburger Icon & Sitemap (Aligned at ends below logos on mobile/tablet) */}
+            <div className="xl:hidden flex justify-between items-center w-full px-6 sm:px-12 mt-3 z-[70]">
                <button 
                   onClick={() => setOpen(true)}
                   className="p-2.5 rounded-full transition-all shadow-md bg-[#002855] text-white hover:bg-blue-600 active:scale-95"
                >
                   <Menu size={20} className="md:w-6 md:h-6" />
                </button>
+               <a 
+                  href="https://www.ieee.org/sitemap.html"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-2.5 rounded-full transition-all shadow-md bg-[#002855] text-white hover:bg-blue-650 active:scale-95 flex items-center justify-center"
+                  title="IEEE Sitemap"
+               >
+                  <Network size={20} className="md:w-6 md:h-6" />
+               </a>
             </div>
 
             {/* Bottom Row: Desktop Horizontal Nav Links - Glassmorphism Dark Blue Cylinder/Pill */}
-            <div className="hidden xl:flex items-center justify-center gap-x-4 xl:gap-x-5 gap-y-2 flex-wrap w-[95%] lg:w-[90%] max-w-7xl mt-4 backdrop-blur-2xl border py-5 px-8 xl:px-10 transition-all duration-500 rounded-full relative overflow-hidden" style={{ background: "linear-gradient(135deg, rgba(0, 40, 85, 0.85) 0%, rgba(0, 24, 60, 0.75) 100%)", borderColor: "rgba(147, 197, 253, 0.25)", boxShadow: "0 8px 32px rgba(0, 40, 85, 0.3), 0 2px 8px rgba(0, 24, 60, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.15)" }}>
+            <div className="hidden xl:flex items-center justify-center gap-x-6 xl:gap-x-8 gap-y-2 w-fit mx-auto mt-4 backdrop-blur-2xl border py-3.5 px-8 xl:px-10 rounded-full relative overflow-hidden" style={{ background: "linear-gradient(135deg, rgba(0, 40, 85, 0.85) 0%, rgba(0, 24, 60, 0.75) 100%)", borderColor: "rgba(147, 197, 253, 0.25)", boxShadow: "0 8px 32px rgba(0, 40, 85, 0.3), 0 2px 8px rgba(0, 24, 60, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.15)" }}>
                {navLinks.map((l, index) => {
                   const isExternal = l.href.startsWith("http://") || l.href.startsWith("https://");
                   return isExternal ? (
@@ -104,10 +113,10 @@ const Navbar = () => {
                         href={l.href}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-white/95 hover:text-white font-bold tracking-[0.18em] text-[13px] uppercase transition-all duration-500 relative group"
+                        className="text-white/95 hover:text-white font-bold tracking-[0.11em] xl:tracking-[0.13em] text-[15.5px] uppercase transition-all duration-550 relative group"
                      >
                         {l.label}
-                        <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-0 h-[2px] transition-all duration-500 group-hover:w-full bg-white"></span>
+                        <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-0 h-[2px] transition-all duration-555 group-hover:w-full bg-white"></span>
                      </motion.a>
                   ) : (
                      <MotionLink
@@ -116,10 +125,10 @@ const Navbar = () => {
                         transition={{ duration: 1.2, delay: 0.2 + (index * 0.05), ease: [0.16, 1, 0.3, 1] }}
                         key={l.label}
                         to={l.href}
-                        className="text-white/95 hover:text-white font-bold tracking-[0.18em] text-[13px] uppercase transition-all duration-500 relative group"
+                        className="text-white/95 hover:text-white font-bold tracking-[0.11em] xl:tracking-[0.13em] text-[15.5px] uppercase transition-all duration-555 relative group"
                       >
                         {l.label}
-                        <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-0 h-[2px] transition-all duration-500 group-hover:w-full bg-white"></span>
+                        <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-0 h-[2px] transition-all duration-555 group-hover:w-full bg-white"></span>
                      </MotionLink>
                   );
                })}
@@ -128,10 +137,21 @@ const Navbar = () => {
                      animate={{ opacity: 1, y: 0 }}
                      transition={{ duration: 1.2, delay: 0.2 + (navLinks.length * 0.05), ease: [0.16, 1, 0.3, 1] }}
                      href="https://vtools.vtools.ieee.org/" target="_blank"
-                     className="text-white/95 hover:text-white font-bold tracking-[0.18em] text-[13px] uppercase transition-all duration-500 relative group"
+                     className="text-white/95 hover:text-white font-bold tracking-[0.11em] xl:tracking-[0.13em] text-[15.5px] uppercase transition-all duration-555 relative group mr-1"
                   >
                      VTOOLS
-                     <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-0 h-[2px] transition-all duration-500 group-hover:w-full bg-white"></span>
+                     <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-0 h-[2px] transition-all duration-555 group-hover:w-full bg-white"></span>
+               </motion.a>
+               <motion.a
+                     initial={{ opacity: 0, y: -10 }}
+                     animate={{ opacity: 1, y: 0 }}
+                     transition={{ duration: 1.2, delay: 0.2 + ((navLinks.length + 1) * 0.05), ease: [0.16, 1, 0.3, 1] }}
+                     href="https://www.ieee.org/sitemap.html" target="_blank"
+                     rel="noopener noreferrer"
+                     className="text-white/80 hover:text-white transition-colors duration-300 ml-1 flex items-center justify-center"
+                     title="IEEE Sitemap"
+                  >
+                     <Network size={18} className="hover:scale-110 transition-transform" />
                </motion.a>
             </div>
 
@@ -140,7 +160,7 @@ const Navbar = () => {
 
       {/* Global Transparent Spacer for Subpages to prevent content clipping under the tall fixed navbar */}
       {!isHomePage && (
-         <div className="h-[120px] sm:h-[140px] md:h-[160px] lg:h-[180px] w-full bg-transparent pointer-events-none" aria-hidden="true"></div>
+         <div className="h-[140px] sm:h-[160px] md:h-[180px] xl:h-[220px] w-full bg-transparent pointer-events-none" aria-hidden="true"></div>
       )}
 
       {/* Mobile Sidebar/Dropdown Menu */}

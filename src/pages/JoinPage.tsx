@@ -88,7 +88,7 @@ const JoinPage = () => {
     <div className="min-h-screen bg-[#fafafa] selection:bg-slate-900 selection:text-white flex flex-col font-sans">
       <Navbar />
 
-      <main className="flex-1 w-full pt-32 pb-24">
+      <main className="flex-1 w-full pt-8 pb-24">
         <div className="max-w-[1200px] mx-auto px-6 md:px-12">
           
           <motion.div 

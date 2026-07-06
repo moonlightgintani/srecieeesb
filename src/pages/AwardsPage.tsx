@@ -10,6 +10,8 @@ import {
     Search,
     Loader2,
     Star,
+    DollarSign,
+    ExternalLink
 } from "lucide-react";
 import { motion, AnimatePresence, Variants } from "framer-motion";
 
@@ -27,26 +29,17 @@ const containerVariants: Variants = {
     hidden: { opacity: 0 },
     visible: {
         opacity: 1,
-        transition: { staggerChildren: 0.12, delayChildren: 0.08 }
+        transition: { staggerChildren: 0.1, delayChildren: 0.05 }
     }
 };
 
 const itemVariants: Variants = {
-    hidden: { opacity: 0, y: 28, scale: 0.97 },
+    hidden: { opacity: 0, y: 25, scale: 0.98 },
     visible: {
         opacity: 1,
         y: 0,
         scale: 1,
         transition: { duration: 0.45, ease: "easeOut" }
-    }
-};
-
-const heroVariants: Variants = {
-    hidden: { opacity: 0, y: 30 },
-    visible: {
-        opacity: 1,
-        y: 0,
-        transition: { duration: 0.7, ease: "easeOut" }
     }
 };
 
@@ -100,256 +93,238 @@ const AwardsPage = () => {
         });
     }, [data, search, selectedYear]);
 
+    // Separate Spotlight Awards (e.g. containing "outstanding", "best", "winner" or with high amounts)
+    const { spotlightAwards, regularAwards } = useMemo(() => {
+        const spotlights: Award[] = [];
+        const regulars: Award[] = [];
+
+        filteredAwards.forEach(award => {
+            const isSpot = award.title.toLowerCase().includes("outstanding") || 
+                           award.title.toLowerCase().includes("national") ||
+                           (award.amount && award.amount.toLowerCase().includes("usd"));
+            if (isSpot && spotlights.length < 2) {
+                spotlights.push(award);
+            } else {
+                regulars.push(award);
+            }
+        });
+
+        return { spotlightAwards: spotlights, regularAwards: regulars };
+    }, [filteredAwards]);
+
     return (
         <div className="min-h-screen bg-slate-50 text-slate-800 overflow-x-hidden">
             <Navbar />
 
-            <section className="bg-[#003764] text-white pt-28 pb-24 relative overflow-hidden">
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.12),transparent_35%)]" />
+
+            {/* Hall of Fame Header Section */}
+            <section className="bg-gradient-to-br from-[#001730] via-[#002b54] to-[#003866] text-white py-16 md:py-20 relative overflow-hidden rounded-b-[40px] border-b border-[#004780]/40 text-left">
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.08),transparent_35%)]" />
 
                 <motion.div
-                    animate={{ y: [0, -18, 0], rotate: [0, 4, 0] }}
-                    transition={{ repeat: Infinity, duration: 4.5, ease: "easeInOut" }}
-                    className="absolute top-20 right-16 opacity-20 hidden md:block"
+                    animate={{ y: [0, -15, 0], rotate: [0, 3, 0] }}
+                    transition={{ repeat: Infinity, duration: 5, ease: "easeInOut" }}
+                    className="absolute top-10 right-16 opacity-15 hidden md:block"
                 >
-                    <Trophy size={120} />
+                    <Trophy size={140} />
                 </motion.div>
 
-                <motion.div
-                    animate={{ y: [0, 18, 0], rotate: [0, -6, 0] }}
-                    transition={{ repeat: Infinity, duration: 5.2, ease: "easeInOut" }}
-                    className="absolute bottom-12 left-10 opacity-10 hidden md:block"
-                >
-                    <Medal size={90} />
-                </motion.div>
-
-                <motion.div
-                    animate={{ x: [0, 20, 0], y: [0, -12, 0] }}
-                    transition={{ repeat: Infinity, duration: 6, ease: "easeInOut" }}
-                    className="absolute top-1/3 left-[8%] h-40 w-40 rounded-full bg-cyan-300/10 blur-3xl"
-                />
-
-                <motion.div
-                    animate={{ x: [0, -18, 0], y: [0, 14, 0] }}
-                    transition={{ repeat: Infinity, duration: 7, ease: "easeInOut" }}
-                    className="absolute bottom-12 right-[10%] h-52 w-52 rounded-full bg-amber-300/10 blur-3xl"
-                />
-
-                <motion.div
-                    variants={heroVariants}
-                    initial="hidden"
-                    animate="visible"
-                    className="max-w-7xl mx-auto px-4 md:px-8 relative z-10"
-                >
-                    <div className="max-w-4xl mx-auto text-center">
-                        <motion.div
-                            initial={{ opacity: 0, scale: 0.9 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            transition={{ duration: 0.45, delay: 0.1 }}
-                            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500/20 border border-amber-500/30 text-amber-300 text-xs font-bold uppercase tracking-wider mb-6 backdrop-blur-md shadow-lg"
-                        >
-                            <Sparkles size={14} />
+                <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
+                    <div className="max-w-3xl">
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-300 text-xs font-bold uppercase tracking-wider mb-6">
+                            <Sparkles size={12} className="animate-spin-slow" />
                             Hall of Fame
-                        </motion.div>
-
-                        <motion.h1
-                            initial={{ opacity: 0, y: 18 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.6, delay: 0.15 }}
-                            className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight leading-tight mb-6 text-center"
-                        >
+                        </div>
+                        <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif font-black tracking-tight leading-tight mb-4">
                             Honors & Awards
-                        </motion.h1>
-
-                        <motion.p
-                            initial={{ opacity: 0, y: 18 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.6, delay: 0.25 }}
-                            className="text-lg text-blue-100 max-w-2xl mx-auto text-center"
-                        >
-                            Celebrating the outstanding achievements, grants, and recognitions earned by the visionary students and professors of IEEE SREC.
-                        </motion.p>
+                        </h1>
+                        <p className="text-blue-100 text-base md:text-lg leading-relaxed max-w-xl">
+                            Celebrating outstanding achievements, grants, and global recognitions earned by the students and advisors of IEEE SREC.
+                        </p>
                     </div>
-                </motion.div>
-
-                <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-slate-50 to-transparent translate-y-1" />
+                </div>
             </section>
 
-            <main className="max-w-7xl mx-auto px-4 md:px-8 py-12 -mt-8 relative z-20">
+            <main className="max-w-7xl mx-auto px-6 md:px-12 py-12 relative z-20">
+                
+                {/* Search & Year Filtering Dashboard */}
                 <motion.div
-                    initial={{ opacity: 0, y: 24 }}
+                    initial={{ opacity: 0, y: 15 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5 }}
-                    className="bg-white p-5 rounded-3xl border border-slate-200 shadow-[0_8px_30px_rgb(0,0,0,0.04)] mb-10 flex flex-col xl:flex-row gap-5 xl:items-center justify-between"
+                    className="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm mb-10 flex flex-col xl:flex-row gap-5 xl:items-center justify-between"
                 >
-                    <div className="relative flex-1 max-w-lg">
-                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
+                    <div className="relative flex-1 max-w-xl">
+                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
                         <input
                             type="text"
-                            placeholder="Search by award title, description, or category..."
-                            className="w-full pl-12 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-[#00629b]/20 focus:border-[#00629b] transition text-sm font-medium"
+                            placeholder="Search honors, grants, categories..."
+                            className="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:bg-white focus:ring-2 focus:ring-blue-500/15 focus:border-blue-500 transition text-sm font-semibold placeholder-slate-400"
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                         />
                     </div>
 
                     <div className="flex items-center gap-2 overflow-x-auto pb-2 xl:pb-0 no-scrollbar">
-                        <span className="text-sm font-bold text-slate-400 uppercase tracking-wider mr-2">Year</span>
+                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mr-2">Select Year</span>
                         {availableYears.map((y) => (
-                            <motion.button
+                            <button
                                 key={y}
-                                whileHover={{ y: -2, scale: 1.04 }}
-                                whileTap={{ scale: 0.96 }}
                                 onClick={() => setSelectedYear(y)}
-                                className={`px-4 py-2 rounded-xl text-sm font-bold transition whitespace-nowrap ${
+                                className={`px-4 py-2 rounded-xl text-xs font-bold transition whitespace-nowrap ${
                                     selectedYear === y
-                                        ? "bg-[#00629b] text-white shadow-md shadow-[#00629b]/20"
-                                        : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                                        ? "bg-blue-600 text-white shadow-md shadow-blue-650/15"
+                                        : "bg-slate-50 text-slate-650 hover:bg-slate-100 border border-slate-100"
                                 }`}
                             >
                                 {y}
-                            </motion.button>
+                            </button>
                         ))}
                     </div>
                 </motion.div>
 
                 {isLoading ? (
-                    <div className="py-32 flex flex-col items-center justify-center">
-                        <Loader2 className="w-12 h-12 animate-spin text-[#00629b]/50 mb-4" />
-                        <p className="text-slate-500 font-medium tracking-wide animate-pulse">Loading Awards...</p>
+                    <div className="py-24 flex flex-col items-center justify-center">
+                        <Loader2 className="w-10 h-10 animate-spin text-blue-500 mb-4" />
+                        <p className="text-slate-400 font-bold text-sm tracking-widest uppercase animate-pulse">Loading Honors Gallery...</p>
                     </div>
                 ) : filteredAwards.length === 0 ? (
                     <motion.div
-                        initial={{ opacity: 0, scale: 0.96 }}
+                        initial={{ opacity: 0, scale: 0.98 }}
                         animate={{ opacity: 1, scale: 1 }}
-                        className="py-20 text-center bg-white rounded-3xl border border-dashed border-slate-300"
+                        className="py-20 text-center bg-white rounded-3xl border border-dashed border-slate-200"
                     >
                         <Trophy className="mx-auto text-slate-300 w-16 h-16 mb-4" />
-                        <h3 className="text-xl font-bold text-slate-900 mb-2">No Awards Found</h3>
-                        <p className="text-slate-500 max-w-md mx-auto">
-                            We couldn't find any awards matching your current filters. Try adjusting your search criteria.
+                        <h3 className="text-lg font-bold text-slate-800 mb-2">No Awards Found</h3>
+                        <p className="text-slate-500 text-xs max-w-xs mx-auto">
+                            No matching items were found under the active filter parameters.
                         </p>
                     </motion.div>
                 ) : (
-                    <motion.div
-                        variants={containerVariants}
-                        initial="hidden"
-                        animate="visible"
-                        className="grid grid-cols-1 lg:grid-cols-2 lg:gap-8 gap-6"
-                    >
-                        <AnimatePresence>
-                            {filteredAwards.map((award, index) => (
-                                <motion.div
-                                    key={award.id}
-                                    variants={itemVariants}
-                                    layout
-                                    whileHover={{
-                                        y: -10,
-                                        rotateX: 1,
-                                        rotateY: index % 2 === 0 ? 1.5 : -1.5,
-                                    }}
-                                    transition={{ duration: 0.28 }}
-                                    className="bg-white border text-left border-slate-200 rounded-3xl p-6 md:p-8 shadow-sm hover:shadow-2xl hover:border-amber-200 transition-all duration-300 group flex flex-col sm:flex-row gap-6 relative overflow-hidden"
-                                >
-                                    <div className="absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-100 transition duration-500 bg-[linear-gradient(120deg,transparent_20%,rgba(255,255,255,0.5)_45%,transparent_70%)] translate-x-[-120%] group-hover:translate-x-[120%]" />
+                    <div className="space-y-12 text-left">
 
-                                    <motion.div
-                                        animate={{ scaleY: [1, 1.04, 1] }}
-                                        transition={{ repeat: Infinity, duration: 2.6, ease: "easeInOut" }}
-                                        className="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-amber-400 to-[#00629b]"
-                                    />
-
-                                    <div className="shrink-0 flex sm:flex-col items-center sm:items-start gap-4">
+                        {/* spotlight awards */}
+                        {spotlightAwards.length > 0 && (
+                            <div className="space-y-6">
+                                <h2 className="text-xs font-bold uppercase tracking-widest text-blue-600 flex items-center gap-1.5">
+                                    <Sparkles size={14} className="fill-blue-500" /> Spotlight Achievements
+                                </h2>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    {spotlightAwards.map(award => (
                                         <motion.div
-                                            whileHover={{ rotate: 10, scale: 1.08 }}
-                                            transition={{ duration: 0.25 }}
-                                            className="w-16 h-16 rounded-2xl bg-amber-50 text-amber-500 flex items-center justify-center rotate-3 group-hover:rotate-12 transition-transform duration-300 shadow-sm"
+                                            key={award.id}
+                                            variants={itemVariants}
+                                            initial="hidden"
+                                            animate="visible"
+                                            className="group relative overflow-hidden rounded-3xl p-8 bg-gradient-to-br from-[#001730] to-[#002a52] text-white flex flex-col justify-between min-h-[300px] border border-[#003c78]/40 shadow-lg hover:scale-[1.01] transition-all duration-300"
                                         >
-                                            {award.category?.toLowerCase().includes("grant") ? (
-                                                <Star size={32} />
-                                            ) : award.category?.toLowerCase().includes("winner") ? (
-                                                <Trophy size={32} />
-                                            ) : (
-                                                <AwardIcon size={32} />
-                                            )}
-                                        </motion.div>
+                                            <div className="absolute -top-12 -right-12 w-40 h-40 bg-blue-500/10 rounded-full blur-2xl group-hover:bg-blue-500/20 transition-all pointer-events-none" />
+                                            
+                                            <div className="flex justify-between items-start">
+                                                <div className="w-14 h-14 rounded-2xl bg-white/10 border border-white/15 flex items-center justify-center text-amber-300">
+                                                    <Trophy size={28} />
+                                                </div>
+                                                <span className="text-[10px] font-bold px-3 py-1 rounded-full bg-white/10 text-blue-200 border border-white/10 tracking-widest uppercase">{award.year}</span>
+                                            </div>
 
-                                        <motion.div
-                                            animate={{ y: [0, -2, 0] }}
-                                            transition={{ repeat: Infinity, duration: 2.2, ease: "easeInOut" }}
-                                            className="flex flex-col"
-                                        >
-                                            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1 hidden sm:block">
-                                                Year
-                                            </span>
-                                            <span className="text-xl font-black text-[#003764]">
-                                                {award.year}
-                                            </span>
-                                        </motion.div>
-                                    </div>
+                                            <div className="mt-8">
+                                                {award.category && (
+                                                    <span className="text-[10px] font-bold tracking-widest uppercase text-blue-300 block mb-2">{award.category}</span>
+                                                )}
+                                                <h3 className="text-xl font-bold text-white mb-3 group-hover:text-blue-200 transition-colors">
+                                                    {award.title}
+                                                </h3>
+                                                {award.description && (
+                                                    <p className="text-white/60 text-xs leading-relaxed line-clamp-3">
+                                                        {award.description}
+                                                    </p>
+                                                )}
+                                            </div>
 
-                                    <div className="flex-1 flex flex-col h-full">
-                                        {award.category && (
-                                            <motion.div
-                                                initial={{ opacity: 0, x: -8 }}
-                                                animate={{ opacity: 1, x: 0 }}
-                                                transition={{ delay: 0.1 }}
-                                                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100/80 text-slate-600 font-semibold text-xs mb-4 w-fit border border-slate-200 shadow-sm backdrop-blur-sm"
-                                            >
-                                                {award.category}
-                                            </motion.div>
-                                        )}
-
-                                        <h3 className="text-2xl font-black text-slate-900 leading-tight mb-3 group-hover:text-[#00629b] transition-colors underline-offset-4 text-center sm:text-left">
-                                            {award.title}
-                                        </h3>
-
-                                        {award.description && (
-                                            <p className="text-slate-600 leading-relaxed min-h-[3rem] mb-6 line-clamp-3 text-center sm:text-left">
-                                                {award.description}
-                                            </p>
-                                        )}
-
-                                        <div className="mt-auto flex flex-wrap items-center justify-between gap-4 pt-4 border-t border-slate-100">
-                                            {award.amount && award.amount !== "-" ? (
-                                                <motion.div
-                                                    whileHover={{ scale: 1.04 }}
-                                                    className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-br from-green-50 to-emerald-50 text-emerald-700 font-bold border border-emerald-200/50 shadow-sm"
-                                                >
-                                                    <span className="text-emerald-600/70 text-[10px] uppercase tracking-widest font-extrabold mr-1">
-                                                        Awarded
+                                            <div className="mt-6 pt-4 border-t border-white/10 flex items-center justify-between">
+                                                {award.amount && award.amount !== "-" ? (
+                                                    <span className="text-green-300 font-extrabold text-sm flex items-center gap-1">
+                                                        <DollarSign size={14} /> {award.amount}
                                                     </span>
-                                                    <span>{award.amount}</span>
-                                                </motion.div>
-                                            ) : (
-                                                <div />
-                                            )}
-
-                                            {award.image_url && (
-                                                <motion.a
-                                                    whileHover={{ y: -2, scale: 1.04 }}
-                                                    whileTap={{ scale: 0.96 }}
-                                                    href={getValidImageUrl(award.image_url)}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-[#00629b] hover:bg-[#004e7c] text-white font-semibold text-sm transition-all duration-300 shadow-md shadow-[#00629b]/20 hover:shadow-lg"
-                                                >
-                                                    <motion.span
-                                                        animate={{ rotate: [0, 12, -8, 0] }}
-                                                        transition={{ repeat: Infinity, duration: 1.8, ease: "easeInOut" }}
-                                                        className="inline-flex"
+                                                ) : <div />}
+                                                {award.image_url && (
+                                                    <a 
+                                                        href={getValidImageUrl(award.image_url)} 
+                                                        target="_blank" 
+                                                        rel="noopener noreferrer"
+                                                        className="text-xs font-bold text-blue-300 hover:text-white flex items-center gap-1.5 transition-colors"
                                                     >
-                                                        <Sparkles size={16} className="text-amber-300" />
-                                                    </motion.span>
-                                                    View Details
-                                                </motion.a>
-                                            )}
-                                        </div>
-                                    </div>
-                                </motion.div>
-                            ))}
-                        </AnimatePresence>
-                    </motion.div>
+                                                        Details <ExternalLink size={12} />
+                                                    </a>
+                                                )}
+                                            </div>
+                                        </motion.div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* gallery list / regular awards grid */}
+                        <div className="space-y-6">
+                            <h2 className="text-xs font-bold uppercase tracking-widest text-slate-400">Honors Directory</h2>
+                            
+                            <motion.div
+                                variants={containerVariants}
+                                initial="hidden"
+                                animate="visible"
+                                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+                            >
+                                <AnimatePresence>
+                                    {regularAwards.map((award) => (
+                                        <motion.div
+                                            key={award.id}
+                                            variants={itemVariants}
+                                            layout
+                                            className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm hover:shadow-md hover:scale-[1.01] transition-all flex flex-col justify-between min-h-[260px] group relative text-left"
+                                        >
+                                            <div>
+                                                <div className="flex justify-between items-start mb-4">
+                                                    <div className="w-10 h-10 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-650 group-hover:text-blue-600 transition-colors">
+                                                        {award.category?.toLowerCase().includes("winner") ? (
+                                                            <Medal size={20} />
+                                                        ) : (
+                                                            <AwardIcon size={20} />
+                                                        )}
+                                                    </div>
+                                                    <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-50 text-slate-500 border border-slate-100">{award.year}</span>
+                                                </div>
+
+                                                <h3 className="font-bold text-slate-800 text-base leading-snug line-clamp-2 mb-2 group-hover:text-blue-600 transition-colors">
+                                                    {award.title}
+                                                </h3>
+                                                {award.description && (
+                                                    <p className="text-slate-550 text-xs leading-relaxed line-clamp-3">
+                                                        {award.description}
+                                                    </p>
+                                                )}
+                                            </div>
+
+                                            <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs">
+                                                {award.amount && award.amount !== "-" ? (
+                                                    <span className="text-emerald-700 font-extrabold">{award.amount}</span>
+                                                ) : <div />}
+                                                {award.image_url && (
+                                                    <a 
+                                                        href={getValidImageUrl(award.image_url)} 
+                                                        target="_blank" 
+                                                        rel="noopener noreferrer"
+                                                        className="font-bold text-blue-600 hover:text-blue-700 flex items-center gap-1"
+                                                    >
+                                                        Details <ExternalLink size={12} />
+                                                    </a>
+                                                )}
+                                            </div>
+                                        </motion.div>
+                                    ))}
+                                </AnimatePresence>
+                            </motion.div>
+                        </div>
+
+                    </div>
                 )}
             </main>
 

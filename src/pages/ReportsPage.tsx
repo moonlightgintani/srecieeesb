@@ -65,7 +65,7 @@ const ReportsPage = () => {
       <Navbar />
       
       {/* CREATIVE HEADER */}
-      <section className="relative pt-20 pb-16 md:pt-24 md:pb-20 overflow-hidden bg-gradient-to-b from-blue-50 via-slate-55 to-white border-b border-slate-200/60">
+      <section className="relative pt-8 pb-10 md:pt-10 md:pb-12 overflow-hidden bg-gradient-to-b from-blue-50 via-slate-55 to-white border-b border-slate-200/60">
         <div className="absolute inset-0 bg-[radial-gradient(#e2e8f0_1px,transparent_1px)] [background-size:24px_24px] opacity-50 pointer-events-none" />
         
         {/* Soft floating accents */}

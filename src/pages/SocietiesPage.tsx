@@ -6,9 +6,7 @@ const SocietiesPage = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      <div className="pt-20">
-        <SocietiesSection />
-      </div>
+      <SocietiesSection />
       <Footer />
     </div>
   );

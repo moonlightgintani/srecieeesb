@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
-import { Cpu, Radio, HeartPulse, Gauge, Loader2, Target, Network, Layers, Activity, ArrowRight } from "lucide-react";
+import { Cpu, Radio, HeartPulse, Gauge, Loader2, Target, Network, Layers, Activity, ArrowRight, Award, Users } from "lucide-react";
+import { motion } from "framer-motion";
 
 import wieLogo from "@/assets/societies/WIE.jpg";
 import embsLogo from "@/assets/societies/EMBS.jpg";
@@ -34,13 +35,12 @@ const societyLinks: Record<string, string> = {
   cis: "https://cis.ieee.org/about/",
 };
 
-// Extensive icon/color mapping based on index or type
 const designTokens = [
   { icon: Cpu, color: "from-blue-500 to-indigo-600", bg: "bg-slate-100 text-slate-900" },
   { icon: HeartPulse, color: "from-rose-500 to-pink-600", bg: "bg-rose-50 text-rose-600" },
   { icon: Radio, color: "from-amber-400 to-orange-500", bg: "bg-orange-50 text-orange-600" },
   { icon: Gauge, color: "from-emerald-400 to-teal-500", bg: "bg-emerald-50 text-emerald-600" },
-  { icon: Network, color: "from-cyan-400 to-blue-500", bg: "bg-slate-100 text-slate-500" },
+  { icon: Network, color: "from-cyan-400 to-blue-500", bg: "bg-slate-100 text-slate-550" },
   { icon: Target, color: "from-purple-500 to-violet-600", bg: "bg-purple-50 text-purple-600" },
   { icon: Layers, color: "from-fuchsia-400 to-pink-500", bg: "bg-fuchsia-50 text-fuchsia-600" },
   { icon: Activity, color: "from-lime-400 to-green-500", bg: "bg-lime-50 text-lime-600" },
@@ -72,35 +72,73 @@ const SocietiesSection = () => {
 
   if (isLoading) {
     return (
-      <section className="py-12 md:py-16 bg-slate-50 flex justify-center items-center min-h-[300px]">
-        <Loader2 className="h-12 w-12 animate-spin text-[#00629b] opacity-50" />
+      <section className="py-24 bg-slate-50 flex flex-col justify-center items-center min-h-[300px]">
+        <Loader2 className="h-10 w-10 animate-spin text-blue-500 mb-4" />
+        <p className="text-slate-400 font-bold text-xs tracking-widest uppercase animate-pulse">Loading Societies...</p>
       </section>
     );
   }
 
   return (
-    <section id="societies" className="py-16 md:py-20 relative overflow-hidden bg-slate-50/50 border-t border-slate-100/85">
+    <section id="societies" className="py-12 md:py-16 relative overflow-hidden bg-slate-50/50">
       
-      {/* Light mode background elements */}
-      <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-gradient-to-b from-blue-50 to-transparent blur-3xl pointer-events-none rounded-full translate-x-1/2 -translate-y-1/2" />
-      <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-gradient-to-t from-emerald-50 to-transparent blur-3xl pointer-events-none rounded-full -translate-x-1/3 translate-y-1/3" />
+      {/* Soft background glow accents */}
+      <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-gradient-to-b from-blue-50/30 to-transparent blur-3xl pointer-events-none rounded-full translate-x-1/3 -translate-y-1/3" />
+      <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-gradient-to-t from-emerald-50/30 to-transparent blur-3xl pointer-events-none rounded-full -translate-x-1/4 translate-y-1/4" />
 
-      <div className="max-w-[1400px] mx-auto px-4 md:px-8 relative z-10">
+      <div className="max-w-[1400px] mx-auto px-6 md:px-12 relative z-10">
         
-        <div className="text-center max-w-3xl mx-auto mb-10">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-100 text-slate-550 font-bold text-xs tracking-widest uppercase mb-4 border border-cyan-100/80 shadow-sm">
-            <Layers size={14} className="text-blue-500" />
-            <span>Technical Chapters</span>
+        {/* HEADER SECTION: Title, Description, and Stats Cards (Horizontal Row) */}
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 mb-12 text-left">
+          <div className="max-w-2xl">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 border border-blue-100 text-blue-600 font-bold text-xs tracking-wider uppercase mb-4 shadow-sm">
+              <Layers size={12} className="text-blue-500 animate-pulse" />
+              Technical Chapters
+            </span>
+            <h2 className="font-serif text-4xl md:text-5xl font-extrabold tracking-tight text-slate-900 leading-tight">
+              Our Societies
+            </h2>
+            <p className="mt-4 text-slate-500 text-sm md:text-base leading-relaxed">
+              Explore SREC's specialized technical societies designed to foster innovation, facilitate research, and connect students to global engineering frameworks.
+            </p>
           </div>
-          <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-slate-900 mb-6">
-            Our <span className="text-slate-900 font-serif font-medium">Societies</span>
-          </h2>
-          <p className="text-slate-500 text-lg md:text-xl font-light">
-            Explore our diverse student chapters dedicated to pushing the boundaries of technology, innovation, and specific engineering disciplines.
-          </p>
+
+          {/* Quick Stats Panel (Horizontal Row) */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 lg:w-[45%] shrink-0">
+            <div className="bg-slate-900 text-white p-5 rounded-2xl border border-slate-800 shadow-md flex flex-col justify-between h-[110px]">
+              <div className="w-8 h-8 rounded-lg bg-blue-500/10 border border-blue-500/20 text-blue-400 flex items-center justify-center shrink-0">
+                <Cpu size={16} />
+              </div>
+              <div>
+                <h4 className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Active Chapters</h4>
+                <p className="text-base font-bold text-white mt-0.5">{societies.length} Societies</p>
+              </div>
+            </div>
+
+            <div className="bg-slate-900 text-white p-5 rounded-2xl border border-slate-800 shadow-md flex flex-col justify-between h-[110px]">
+              <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-450 flex items-center justify-center shrink-0">
+                <Users size={16} />
+              </div>
+              <div>
+                <h4 className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Total Members</h4>
+                <p className="text-base font-bold text-white mt-0.5">500+ Students</p>
+              </div>
+            </div>
+
+            <div className="bg-slate-900 text-white p-5 rounded-2xl border border-slate-800 shadow-md flex flex-col justify-between h-[110px]">
+              <div className="w-8 h-8 rounded-lg bg-purple-500/10 border border-purple-500/20 text-purple-400 flex items-center justify-center shrink-0">
+                <Award size={16} />
+              </div>
+              <div>
+                <h4 className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Annual Projects</h4>
+                <p className="text-base font-bold text-white mt-0.5">100+ Initiatives</p>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {/* FULL-WIDTH GRID OF SOCIETIES */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 text-left">
           {societies.map((s: any, i: number) => {
             const token = designTokens[i % designTokens.length];
             const Icon = token.icon;
@@ -110,54 +148,54 @@ const SocietiesSection = () => {
             const externalUrl = societyLinks[linkSlug] || "https://www.ieee.org/";
             
             return (
-              <a
+              <motion.a
                 href={externalUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 key={s.id || s.name}
                 onMouseEnter={() => setHoveredIdx(i)}
                 onMouseLeave={() => setHoveredIdx(null)}
-                className="relative group rounded-3xl overflow-hidden cursor-pointer bg-white/70 backdrop-blur-xl border border-slate-200/60 shadow-lg shadow-slate-100/50 hover:shadow-xl hover:shadow-indigo-500/5 hover:-translate-y-1.5 transition-all duration-500 block"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="relative group rounded-3xl overflow-hidden cursor-pointer bg-white/70 backdrop-blur-xl border border-slate-200/60 shadow-sm hover:shadow-md hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between min-h-[300px]"
               >
-                {/* Animated gradient border effect on hover */}
-                <div className={`absolute inset-0 bg-gradient-to-br ${token.color} opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-10`} />
-                <div className="absolute inset-0 border border-slate-200/40 group-hover:border-transparent transition-colors duration-500 rounded-3xl pointer-events-none z-10" />
-                
-                <div className="relative h-full p-6 md:p-8 flex flex-col items-center text-center z-10">
-                  
-                  <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-6 transition-all duration-500 ease-out z-10 relative overflow-hidden ${isHovered ? 'shadow-md scale-110 -rotate-3 border border-slate-200/30 bg-white' : 'bg-slate-50 border border-slate-100'}`}>
-                    {logo ? (
-                      <img src={logo} alt={`${s.name} logo`} className="w-full h-full object-contain p-1" />
-                    ) : (
-                      <div className={`w-full h-full flex items-center justify-center ${isHovered ? `bg-gradient-to-br ${token.color} text-slate-900` : 'text-slate-500'}`}>
-                        <Icon className="h-8 w-8" />
-                      </div>
-                    )}
+                <div className="p-6 md:p-8">
+                  <div className="flex justify-between items-start mb-6">
+                    <div className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-all duration-500 ease-out relative overflow-hidden ${isHovered ? 'shadow-md scale-105 border border-slate-200 bg-white' : 'bg-slate-50 border border-slate-100'}`}>
+                      {logo ? (
+                        <img src={logo} alt={`${s.name} logo`} className="w-full h-full object-contain p-1" />
+                      ) : (
+                        <div className="text-slate-500">
+                          <Icon className="h-6 w-6" />
+                        </div>
+                      )}
+                    </div>
+                    <span className="text-[9px] font-bold tracking-widest uppercase text-blue-600 bg-blue-50 px-2.5 py-1 rounded-full border border-blue-100/50">Active</span>
                   </div>
-                  
-                  <h3 className="font-serif font-extrabold text-xl text-slate-800 mb-3 tracking-tight z-10 relative">
+
+                  <h3 className="font-serif font-bold text-lg text-slate-800 mb-3 group-hover:text-blue-650 transition-colors">
                     {s.name}
                   </h3>
                   
                   {s.description ? (
-                    <p className={`line-clamp-3 text-sm transition-colors duration-300 z-10 relative ${isHovered ? 'text-slate-600 font-normal' : 'text-slate-400 font-light'}`}>
+                    <p className="text-slate-500 text-xs md:text-sm leading-relaxed line-clamp-4">
                       {s.description}
                     </p>
                   ) : (
-                    <p className="text-sm text-slate-400 italic z-10 relative">Exploring innovations pushing boundaries.</p>
+                    <p className="text-xs text-slate-400 italic">Exploring innovations pushing technological boundaries.</p>
                   )}
-                  
-                  {/* Faux button effect on hover */}
-                  <div className={`mt-6 w-full pt-4 border-t border-slate-100 flex items-center justify-center gap-1.5 text-sm font-semibold transition-all duration-500 z-10 relative ${isHovered ? 'text-blue-650 opacity-100 translate-y-0' : 'text-slate-400 opacity-0 translate-y-1.5'}`}>
-                    <span>Learn More</span> <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
-                  </div>
-                  
                 </div>
-              </a>
+
+                <div className="px-6 md:px-8 pb-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-slate-400 group-hover:text-blue-650 transition-colors">
+                  <span>Society Homepage</span>
+                  <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                </div>
+              </motion.a>
             );
           })}
         </div>
-        
+
       </div>
     </section>
   );
