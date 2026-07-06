@@ -51,21 +51,11 @@ const Navbar = () => {
    return (
      <>
       {/* Top Navbar */}
-      <nav className="fixed top-4 left-1/2 -translate-x-1/2 w-[95%] lg:w-[90%] max-w-7xl z-50">
+      <nav className="fixed top-0 left-0 w-full z-50 flex flex-col items-center">
          
-         <div className="w-full flex flex-col items-center justify-center gap-3">
+         <div className="w-full flex flex-col items-center justify-center">
             
-            {/* Mobile Hamburger Icon (Always visible on mobile left corner) */}
-            <div className={`xl:hidden absolute left-4 md:left-10 flex items-center z-[70] transition-all duration-1000 top-1/2 -translate-y-1/2`}>
-               <button 
-                  onClick={() => setOpen(true)}
-                  className="p-2.5 rounded-full transition-all shadow-md bg-[#002855] text-white hover:bg-blue-600 active:scale-95"
-               >
-                  <Menu size={20} className="md:w-6 md:h-6" />
-               </button>
-            </div>
-
-            {/* Top Row: Logos with ultra-smooth cinematic hide animation - Glassmorphism Background */}
+            {/* Top Row: Logos with ultra-smooth cinematic hide animation - Glassmorphism Background - Edge-to-Edge */}
             <motion.div 
                initial={false}
                animate={{ 
@@ -74,23 +64,35 @@ const Navbar = () => {
                   scale: hideLogos ? 0.95 : 1
                }}
                transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-               className="w-full bg-white/70 backdrop-blur-xl border border-white/30 origin-top relative z-50 overflow-hidden shadow-lg rounded-3xl"
+               className="w-full bg-white/70 backdrop-blur-xl border-b border-white/30 origin-top relative z-50 overflow-hidden shadow-md"
             >
-               <div className="flex justify-center items-center xl:grid xl:grid-cols-3 w-full px-6 sm:px-16 xl:px-24 py-3 md:py-4 gap-4 sm:gap-8 xl:gap-8">
-                  <div className="flex justify-center items-center">
-                     <img src={srecLogo} alt="SREC" className="h-20 sm:h-22 md:h-24 lg:h-24 w-auto object-contain flex-shrink-0" />
-                  </div>
-                  <div className="flex justify-center items-center">
-                     <img src={ieeeLogo} alt="IEEE" className="h-20 sm:h-22 md:h-24 lg:h-24 w-auto object-contain flex-shrink-0" />
-                  </div>
-                  <div className="flex justify-center items-center">
-                     <img src={snrLogo} alt="SNR Trust" className="h-20 sm:h-22 md:h-24 lg:h-24 w-auto object-contain flex-shrink-0" />
-                  </div>
-               </div>
+                <div className="w-full px-3 sm:px-8 xl:px-12">
+                   <div className="relative flex flex-row justify-center xl:justify-between items-center w-full py-3 md:py-4 gap-2 sm:gap-6 xl:gap-0">
+                      <div className="flex justify-center items-center">
+                         <img src={srecLogo} alt="SREC" className="h-24 sm:h-28 md:h-32 lg:h-32 w-auto object-contain flex-shrink-0" />
+                      </div>
+                      <div className="flex justify-center items-center xl:absolute xl:left-1/2 xl:-translate-x-1/2">
+                         <img src={ieeeLogo} alt="IEEE" className="h-24 sm:h-28 md:h-32 lg:h-32 w-auto object-contain flex-shrink-0" />
+                      </div>
+                      <div className="flex justify-center items-center">
+                         <img src={snrLogo} alt="SNR Trust" className="h-24 sm:h-28 md:h-32 lg:h-32 w-auto object-contain flex-shrink-0" />
+                      </div>
+                   </div>
+                </div>
             </motion.div>
 
-            {/* Bottom Row: Desktop Horizontal Nav Links - Glassmorphism Blue Cylinder/Pill */}
-            <div className="hidden xl:flex items-center justify-center gap-x-6 gap-y-2 flex-wrap w-full backdrop-blur-2xl border py-5 px-10 transition-all duration-500 rounded-full relative overflow-hidden" style={{ background: "linear-gradient(135deg, rgba(37,99,235,0.55) 0%, rgba(59,130,246,0.40) 50%, rgba(99,102,241,0.45) 100%)", borderColor: "rgba(147,197,253,0.35)", boxShadow: "0 8px 32px rgba(37,99,235,0.35), 0 2px 8px rgba(59,130,246,0.25), inset 0 1px 0 rgba(255,255,255,0.25)" }}>
+            {/* Mobile Hamburger Icon (Aligned left below logos on mobile/tablet) */}
+            <div className="xl:hidden flex justify-start w-full px-6 sm:px-12 mt-3 z-[70]">
+               <button 
+                  onClick={() => setOpen(true)}
+                  className="p-2.5 rounded-full transition-all shadow-md bg-[#002855] text-white hover:bg-blue-600 active:scale-95"
+               >
+                  <Menu size={20} className="md:w-6 md:h-6" />
+               </button>
+            </div>
+
+            {/* Bottom Row: Desktop Horizontal Nav Links - Glassmorphism Dark Blue Cylinder/Pill */}
+            <div className="hidden xl:flex items-center justify-center gap-x-4 xl:gap-x-5 gap-y-2 flex-wrap w-[95%] lg:w-[90%] max-w-7xl mt-4 backdrop-blur-2xl border py-5 px-8 xl:px-10 transition-all duration-500 rounded-full relative overflow-hidden" style={{ background: "linear-gradient(135deg, rgba(0, 40, 85, 0.85) 0%, rgba(0, 24, 60, 0.75) 100%)", borderColor: "rgba(147, 197, 253, 0.25)", boxShadow: "0 8px 32px rgba(0, 40, 85, 0.3), 0 2px 8px rgba(0, 24, 60, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.15)" }}>
                {navLinks.map((l, index) => {
                   const isExternal = l.href.startsWith("http://") || l.href.startsWith("https://");
                   return isExternal ? (
@@ -149,10 +151,10 @@ const Navbar = () => {
                animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
                exit={{ opacity: 0, scale: 0.95, filter: "blur(10px)" }}
                transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-               className="fixed inset-0 z-[100] bg-white/95 backdrop-blur-3xl w-full h-screen overflow-y-auto"
+               className="fixed inset-0 z-[100] bg-[#002855]/90 backdrop-blur-3xl w-full h-screen overflow-y-auto"
             >
                <div className="absolute top-8 right-8">
-                  <button onClick={() => setOpen(false)} className="p-3 bg-black/5 rounded-full text-black/50 hover:text-black hover:bg-black/10 transition-all">
+                  <button onClick={() => setOpen(false)} className="p-3 bg-white/10 rounded-full text-white/70 hover:text-white hover:bg-white/20 transition-all">
                      <X size={32} />
                   </button>
                </div>
@@ -169,7 +171,7 @@ const Navbar = () => {
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.5, delay: 0.1 + (idx * 0.05) }}
                             onClick={() => setOpen(false)}
-                            className="text-black/80 text-xl tracking-[0.3em] uppercase font-medium hover:text-blue-600 transition-colors"
+                            className="text-white/80 text-xl tracking-[0.3em] uppercase font-semibold hover:text-blue-200 transition-colors"
                          >
                             {l.label}
                          </motion.a>
@@ -181,7 +183,7 @@ const Navbar = () => {
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.5, delay: 0.1 + (idx * 0.05) }}
                             onClick={() => setOpen(false)}
-                            className="text-black/80 text-xl tracking-[0.3em] uppercase font-medium hover:text-blue-600 transition-colors"
+                            className="text-white/80 text-xl tracking-[0.3em] uppercase font-semibold hover:text-blue-200 transition-colors"
                          >
                             {l.label}
                          </MotionLink>
@@ -193,7 +195,7 @@ const Navbar = () => {
                      animate={{ opacity: 1, y: 0 }}
                      transition={{ duration: 0.5, delay: 0.1 + (navLinks.length * 0.05) }}
                      onClick={() => setOpen(false)}
-                     className="text-black/80 text-xl tracking-[0.3em] uppercase font-medium hover:text-blue-600 transition-colors"
+                     className="text-white/80 text-xl tracking-[0.3em] uppercase font-semibold hover:text-blue-200 transition-colors"
                   >
                      VTOOLS
                   </motion.a>
