@@ -66,19 +66,19 @@ const Navbar = () => {
                transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
                className="w-full bg-white/70 backdrop-blur-xl border-b border-white/30 origin-top relative z-50 overflow-hidden shadow-md"
             >
-                <div className="w-full px-3 sm:px-8 xl:px-12">
-                   <div className="relative flex flex-row justify-center xl:justify-between items-center w-full py-4 md:py-6 gap-3 sm:gap-8 xl:gap-0">
-                      <div className="flex justify-center items-center">
-                         <img src={srecLogo} alt="SREC" className="h-28 sm:h-32 md:h-36 lg:h-40 w-auto object-contain flex-shrink-0" />
-                      </div>
-                      <div className="flex justify-center items-center xl:absolute xl:left-1/2 xl:-translate-x-1/2">
-                         <img src={ieeeLogo} alt="IEEE" className="h-28 sm:h-32 md:h-36 lg:h-40 w-auto object-contain flex-shrink-0" />
-                      </div>
-                      <div className="flex justify-center items-center">
-                         <img src={snrLogo} alt="SNR Trust" className="h-28 sm:h-32 md:h-36 lg:h-40 w-auto object-contain flex-shrink-0" />
-                      </div>
-                   </div>
-                </div>
+                 <div className="w-full px-3 sm:px-8 xl:px-12">
+                    <div className="relative flex flex-row justify-center xl:justify-between items-center w-full py-2.5 sm:py-3.5 lg:py-4 gap-2 sm:gap-6 xl:gap-0">
+                       <div className="flex justify-center items-center">
+                          <img src={srecLogo} alt="SREC" className="h-[38px] sm:h-[55px] md:h-[65px] lg:h-[75px] xl:h-[80px] w-auto object-contain flex-shrink-0" />
+                       </div>
+                       <div className="flex justify-center items-center xl:absolute xl:left-1/2 xl:-translate-x-1/2">
+                          <img src={ieeeLogo} alt="IEEE" className="h-[38px] sm:h-[55px] md:h-[65px] lg:h-[75px] xl:h-[80px] w-auto object-contain flex-shrink-0" />
+                       </div>
+                       <div className="flex justify-center items-center">
+                          <img src={snrLogo} alt="SNR Trust" className="h-[38px] sm:h-[55px] md:h-[65px] lg:h-[75px] xl:h-[80px] w-auto object-contain flex-shrink-0" />
+                       </div>
+                    </div>
+                 </div>
             </motion.div>
 
             {/* Mobile Hamburger Icon & Sitemap (Aligned at ends below logos on mobile/tablet) */}
