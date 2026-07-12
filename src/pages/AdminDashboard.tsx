@@ -262,6 +262,38 @@ const AdminDashboard = () => {
     fetchAdmins();
   }, [navigate]);
 
+  // Auto Logout due to inactivity (5 minutes)
+  useEffect(() => {
+    let timeoutId: any;
+    const INACTIVITY_TIMEOUT = 5 * 60 * 1000; // 5 minutes
+
+    const logoutUser = async () => {
+      sessionStorage.removeItem("admin_auth");
+      await supabase.auth.signOut();
+      alert("You have been automatically logged out due to inactivity.");
+      navigate("/admin-login");
+    };
+
+    const resetTimer = () => {
+      if (timeoutId) clearTimeout(timeoutId);
+      timeoutId = setTimeout(logoutUser, INACTIVITY_TIMEOUT);
+    };
+
+    const events = ["mousemove", "keydown", "mousedown", "scroll", "touchstart"];
+    events.forEach(event => {
+      window.addEventListener(event, resetTimer);
+    });
+
+    resetTimer();
+
+    return () => {
+      events.forEach(event => {
+        window.removeEventListener(event, resetTimer);
+      });
+      if (timeoutId) clearTimeout(timeoutId);
+    };
+  }, [navigate]);
+
   const resetActivityForm = () => {
     setEditingActivityId(null);
     setActivityForm({
