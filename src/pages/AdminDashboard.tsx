@@ -4,7 +4,7 @@ import { supabase } from "@/lib/supabase";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import OfficeBearersAdmin from "@/components/OfficeBearersAdmin";
-import { Activity, Users, Settings, Briefcase, FileText, Banknote, ShieldCheck, Image as ImageIcon, LayoutDashboard, LogOut, TrendingUp, Search, Bell, Cpu } from "lucide-react";
+import { Activity, Users, Settings, Briefcase, FileText, Banknote, ShieldCheck, Image as ImageIcon, LayoutDashboard, LogOut, TrendingUp, Search, Bell, Cpu, Globe } from "lucide-react";
 
 type ActivityRow = {
   id: number;
@@ -755,6 +755,24 @@ const AdminDashboard = () => {
               </button>
             </div>
           </div>
+
+          {/* Group 5: DEVELOPER */}
+          <div className="space-y-2">
+            <p className="px-3 text-[10px] font-bold text-slate-400 uppercase tracking-widest">DEVELOPER</p>
+            <div className="space-y-1">
+              <a
+                href="https://surya-ruddy.vercel.app/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-semibold transition-all text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+              >
+                <div className="flex items-center gap-2.5">
+                  <Globe size={18} className="text-blue-500" />
+                  <span>My Portfolio</span>
+                </div>
+              </a>
+            </div>
+          </div>
         </div>
 
         {/* Promo Card at bottom of sidebar */}
@@ -931,6 +949,93 @@ const AdminDashboard = () => {
                   </div>
                   <div className="absolute right-0 bottom-0 opacity-10 pointer-events-none transform translate-x-1/4 translate-y-1/4">
                     <ShieldCheck size={250} />
+                  </div>
+                </div>
+
+                {/* Visual Analytics Graphs Grid */}
+                <div className="grid gap-6 md:grid-cols-3 mt-8">
+                  {/* Monthly Event Engagement Bar Chart */}
+                  <div className="md:col-span-2 rounded-xl border border-slate-200 bg-white p-6 shadow-sm flex flex-col justify-between">
+                    <div>
+                      <div className="flex items-center justify-between mb-4">
+                        <div>
+                          <h4 className="text-sm font-bold text-slate-800 uppercase tracking-wider">Event Engagement</h4>
+                          <p className="text-xs text-slate-400 font-semibold mt-0.5">Monthly registrations count</p>
+                        </div>
+                        <select className="text-xs font-semibold bg-slate-50 border border-slate-200 rounded px-2.5 py-1 text-slate-500 focus:outline-none">
+                          <option>2026 Academic Year</option>
+                          <option>2025 Academic Year</option>
+                        </select>
+                      </div>
+                      
+                      {/* Bar Bars */}
+                      <div className="h-64 flex items-end justify-between gap-2 pt-6">
+                        {[
+                          { month: "Jan", val: 65 },
+                          { month: "Feb", val: 45 },
+                          { month: "Mar", val: 85 },
+                          { month: "Apr", val: 30 },
+                          { month: "May", val: 95 },
+                          { month: "Jun", val: 55 },
+                          { month: "Jul", val: 70 },
+                          { month: "Aug", val: 40 },
+                          { month: "Sep", val: 80 },
+                          { month: "Oct", val: 90 },
+                          { month: "Nov", val: 75 },
+                          { month: "Dec", val: 110 }
+                        ].map((item, idx) => (
+                          <div key={idx} className="flex-1 flex flex-col items-center gap-2 group">
+                            <div className="w-full bg-slate-50 rounded-t-md relative h-48 flex items-end overflow-hidden">
+                              <div
+                                style={{ height: `${(item.val / 110) * 100}%` }}
+                                className="w-full bg-gradient-to-t from-blue-600 to-indigo-500 rounded-t-md group-hover:from-blue-500 group-hover:to-indigo-400 transition-all duration-300 relative"
+                              >
+                                <span className="absolute -top-7 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[10px] font-bold rounded px-1.5 py-0.5 opacity-0 group-hover:opacity-100 transition pointer-events-none">
+                                  {item.val}
+                                </span>
+                              </div>
+                            </div>
+                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{item.month}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Member Distribution Donut/Radial Mockup */}
+                  <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm flex flex-col justify-between">
+                    <div>
+                      <h4 className="text-sm font-bold text-slate-800 uppercase tracking-wider mb-1">Members Distribution</h4>
+                      <p className="text-xs text-slate-400 font-semibold mb-6">Student vs Professional</p>
+
+                      <div className="flex justify-center items-center py-6 relative">
+                        {/* Circular progress SVG */}
+                        <svg className="w-40 h-40 transform -rotate-90">
+                          <circle cx="80" cy="80" r="65" stroke="#f1f5f9" strokeWidth="14" fill="transparent" />
+                          <circle cx="80" cy="80" r="65" stroke="#2563eb" strokeWidth="14" fill="transparent"
+                            strokeDasharray="408" strokeDashoffset="102" strokeLinecap="round" className="transition-all duration-500" />
+                        </svg>
+                        <div className="absolute flex flex-col items-center">
+                          <span className="text-3xl font-black text-slate-800">75%</span>
+                          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-0.5">Students</span>
+                        </div>
+                      </div>
+
+                      <div className="space-y-3 pt-6 border-t border-slate-100">
+                        <div className="flex items-center justify-between text-xs font-semibold">
+                          <span className="flex items-center gap-2 text-slate-500">
+                            <span className="w-3 h-3 rounded-full bg-blue-600"></span> Student Members
+                          </span>
+                          <span className="text-slate-800">75%</span>
+                        </div>
+                        <div className="flex items-center justify-between text-xs font-semibold">
+                          <span className="flex items-center gap-2 text-slate-500">
+                            <span className="w-3 h-3 rounded-full bg-slate-200"></span> Professional Members
+                          </span>
+                          <span className="text-slate-800">25%</span>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
