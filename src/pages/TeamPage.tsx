@@ -20,9 +20,10 @@ import {
   Shield,
   Star,
   History,
-  Loader2
+  Loader2,
+  X
 } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "@/lib/supabase";
 import {
   Chart as ChartJS,
@@ -466,6 +467,44 @@ const TeamPage = () => {
   const [analyticsSearch, setAnalyticsSearch] = useState("");
   const [sortField, setSortField] = useState<SortField>("year");
   const [sortAsc, setSortAsc] = useState(false);
+  const [selectedPopupYear, setSelectedPopupYear] = useState<number | null>(null);
+  const [modalMembers, setModalMembers] = useState<any[]>([]);
+  const [modalLoading, setModalLoading] = useState(false);
+
+  // Memos for popup modal details
+  const staffMembers = useMemo(() => {
+    return modalMembers.filter((m) => m.member_type?.toLowerCase() === "staff" || m.member_type?.toLowerCase() === "professional");
+  }, [modalMembers]);
+
+  const studentMembers = useMemo(() => {
+    return modalMembers.filter((m) => m.member_type?.toLowerCase() === "student" || m.member_type?.toLowerCase() === "student member" || m.member_type?.toLowerCase() === "student members");
+  }, [modalMembers]);
+
+  // Fetch yearly member directory from Supabase on-demand when year is clicked
+  useEffect(() => {
+    if (selectedPopupYear === null) {
+      setModalMembers([]);
+      return;
+    }
+    const fetchYearMembers = async () => {
+      setModalLoading(true);
+      try {
+        const { data, error } = await supabase
+          .from("ieee_member_directory")
+          .select("*")
+          .eq("year", selectedPopupYear)
+          .order("s_no", { ascending: true });
+        if (data) {
+          setModalMembers(data);
+        }
+      } catch (err) {
+        console.error("Error fetching year members:", err);
+      } finally {
+        setModalLoading(false);
+      }
+    };
+    fetchYearMembers();
+  }, [selectedPopupYear]);
 
   // --- SUPABASE DATA FETCH ---
   useEffect(() => {
@@ -1016,15 +1055,15 @@ const TeamPage = () => {
               </div>
 
               {/* Data Table */}
-              <div className="bg-white border border-slate-150 rounded-xl overflow-hidden shadow-sm">
-                <div className="flex flex-wrap items-center justify-between gap-3 px-5 py-4 border-b border-slate-150">
+              <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-md">
+                <div className="flex flex-wrap items-center justify-between gap-3 px-6 py-5 border-b border-slate-200 bg-slate-50/50">
                   <div className="flex items-center gap-3">
-                    <span className="text-xs font-bold text-slate-505 uppercase tracking-wider">Year:</span>
+                    <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Year:</span>
                     <select
                       aria-label="Filter by year"
                       value={selectedYear}
                       onChange={(e) => setSelectedYear(e.target.value)}
-                      className="text-xs font-semibold border border-slate-200 rounded-lg px-3 py-1.5 bg-white outline-none focus:border-blue-500"
+                      className="text-xs font-semibold border border-slate-200 rounded-lg px-3 py-1.5 bg-white outline-none focus:border-blue-500 transition shadow-sm"
                     >
                       <option value="all">All Years</option>
                       {years.map((y) => <option key={y} value={y}>{y}</option>)}
@@ -1033,12 +1072,12 @@ const TeamPage = () => {
                       value={analyticsSearch}
                       onChange={(e) => setAnalyticsSearch(e.target.value)}
                       placeholder="Search year…"
-                      className="text-xs font-semibold border border-slate-200 rounded-lg px-3 py-1.5 w-36 outline-none focus:border-blue-500"
+                      className="text-xs font-semibold border border-slate-200 rounded-lg px-3 py-1.5 w-36 outline-none focus:border-blue-500 transition shadow-sm"
                     />
                   </div>
                   <button
                     onClick={exportCSV}
-                    className="text-xs font-bold bg-blue-750 hover:bg-blue-800 text-white px-4 py-2 rounded-lg transition flex items-center gap-1.5"
+                    className="text-xs font-bold bg-blue-700 hover:bg-blue-800 text-white px-4 py-2 rounded-lg transition flex items-center gap-1.5 shadow-sm hover:shadow"
                   >
                     <Download size={14} />
                     Export CSV
@@ -1058,70 +1097,190 @@ const TeamPage = () => {
                     </style>
                     <div className="overflow-x-auto">
                       <table className="w-full border-collapse">
-                        <thead className="bg-[#0C447C] text-white text-xs">
+                        <thead className="bg-slate-50/75 border-b border-slate-200/80 text-slate-700 text-xs font-bold uppercase tracking-wider">
                           <tr>
-                            <th className="px-5 py-3 text-left w-12">#</th>
+                            <th className="px-5 py-3.5 text-left w-20">S.No.</th>
                             {(["year", "professional_members", "student_members", "total_members"] as SortField[]).map((f) => (
-                              <th key={f} className="px-5 py-3 text-left cursor-pointer hover:bg-blue-850" onClick={() => handleSort(f)}>
-                                {f === "year" ? "Year" : f === "professional_members" ? "Professional" : f === "student_members" ? "Student" : "Total"}
-                                {sortField === f ? (sortAsc ? " ▲" : " ▼") : " ⇅"}
+                              <th key={f} className="px-5 py-3.5 text-left cursor-pointer hover:bg-slate-100 transition-colors select-none" onClick={() => handleSort(f)}>
+                                <span className="flex items-center gap-1">
+                                  {f === "year" ? "Year" : f === "professional_members" ? "Professional" : f === "student_members" ? "Student" : "Total"}
+                                  <span className="text-[10px] text-slate-450 font-normal">
+                                    {sortField === f ? (sortAsc ? " ▲" : " ▼") : " ⇅"}
+                                  </span>
+                                </span>
                               </th>
                             ))}
-                            <th className="px-5 py-3 text-left">Share</th>
-                            <th className="px-5 py-3 text-left">Trend</th>
+                            <th className="px-5 py-3.5 text-left">Share</th>
+                            <th className="px-5 py-3.5 text-left">Trend</th>
                           </tr>
                         </thead>
-                        <tbody>
-                          {filteredMembers.map((row) => {
-                            const rank = sortedByTotal.findIndex((x) => x.id === row.id);
+                        <tbody className="divide-y divide-slate-100">
+                          {filteredMembers.map((row, index) => {
                             const profPct = Math.round((row.professional_members / row.total_members) * 100);
                             return (
-                              <tr key={row.id} className="border-b border-slate-100 hover:bg-slate-50/50 transition">
-                                <td className="px-5 py-3"><RankBadge rank={rank} /></td>
-                                  <td className="px-5 py-3">
-                                    <span className="bg-blue-50 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">{row.year}</span>
-                                  </td>
-                                  <td className="px-5 py-3">
-                                    <div className="flex items-center gap-2">
-                                      <span className="text-xs font-bold w-7">{row.professional_members}</span>
-                                      <div className="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden">
-                                        <div className={`h-full bg-blue-700 rounded-full bar-p-${row.id}`} />
-                                      </div>
-                                      <span className="text-[10px] text-gray-400 font-semibold">{profPct}%</span>
+                              <tr key={row.id} className="hover:bg-slate-50/40 transition-colors">
+                                <td className="px-5 py-4"><RankBadge rank={index} /></td>
+                                <td className="px-5 py-4">
+                                  <button
+                                    onClick={() => setSelectedPopupYear(row.year)}
+                                    className="bg-blue-50 hover:bg-blue-100/90 text-[#0c447c] text-xs font-bold px-3 py-1 rounded-full border border-blue-100/70 hover:border-blue-200 transition-all shadow-sm hover:scale-105 active:scale-95 flex items-center gap-1.5"
+                                    title="Click to view office bearers and committee directory"
+                                  >
+                                    <span>{row.year}</span>
+                                    <span className="text-[9px] text-[#0c447c]/60">ℹ️</span>
+                                  </button>
+                                </td>
+                                <td className="px-5 py-4">
+                                  <div className="flex items-center gap-2">
+                                    <span className="text-xs font-semibold text-slate-800 w-7">{row.professional_members}</span>
+                                    <div className="flex-1 h-2 bg-slate-105 rounded-full overflow-hidden min-w-[60px] md:min-w-[100px]">
+                                      <div className={`h-full bg-blue-600 rounded-full bar-p-${row.id}`} />
                                     </div>
-                                  </td>
-                                  <td className="px-5 py-3">
-                                    <div className="flex items-center gap-2">
-                                      <span className="text-xs font-bold w-7">{row.student_members}</span>
-                                      <div className="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden">
-                                        <div className={`h-full bg-teal-600 rounded-full bar-s-${row.id}`} />
-                                      </div>
-                                      <span className="text-[10px] text-gray-400 font-semibold">{100 - profPct}%</span>
+                                    <span className="text-[10px] text-slate-400 font-semibold">{profPct}%</span>
+                                  </div>
+                                </td>
+                                <td className="px-5 py-4">
+                                  <div className="flex items-center gap-2">
+                                    <span className="text-xs font-semibold text-slate-800 w-7">{row.student_members}</span>
+                                    <div className="flex-1 h-2 bg-slate-105 rounded-full overflow-hidden min-w-[60px] md:min-w-[100px]">
+                                      <div className={`h-full bg-teal-500 rounded-full bar-s-${row.id}`} />
                                     </div>
-                                  </td>
-                                  <td className="px-5 py-3 font-bold text-blue-700 text-sm">{row.total_members}</td>
-                                  <td className="px-5 py-3">
-                                    <div className="w-20 h-1.5 bg-gray-100 rounded-full overflow-hidden">
-                                      <div className={`h-full bg-blue-400 rounded-full bar-t-${row.id}`} />
-                                    </div>
-                                  </td>
-                                  <td className="px-5 py-3"><TrendBars data={memberCounts} currentId={row.id} /></td>
-                                </tr>
-                              );
-                            })}
-                          </tbody>
-                        </table>
-                      </div>
-                    </>
-                  )}
-                </div>
+                                    <span className="text-[10px] text-slate-400 font-semibold">{100 - profPct}%</span>
+                                  </div>
+                                </td>
+                                <td className="px-5 py-4 font-extrabold text-blue-800 text-sm">{row.total_members}</td>
+                                <td className="px-5 py-4">
+                                  <div className="w-20 h-2 bg-slate-105 rounded-full overflow-hidden">
+                                    <div className={`h-full bg-indigo-400 rounded-full bar-t-${row.id}`} />
+                                  </div>
+                                </td>
+                                <td className="px-5 py-4"><TrendBars data={memberCounts} currentId={row.id} /></td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
+                    </div>
+                  </>
+                )}
+              </div>
             </section>
-
           </>
         )}
       </main>
 
       <Footer />
+
+      {/* Year Details Modal */}
+      <AnimatePresence>
+        {selectedPopupYear !== null && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 15 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 15 }}
+              className="bg-white rounded-3xl shadow-2xl max-w-4xl w-full max-h-[85vh] overflow-hidden flex flex-col border border-slate-200/80"
+            >
+              {/* Header */}
+              <div className="flex items-center justify-between px-6 py-5 border-b border-slate-150 bg-slate-50/50">
+                <div>
+                  <h3 className="text-lg font-black text-slate-900">
+                    IEEE Members Directory - Year {selectedPopupYear}
+                  </h3>
+                  <p className="text-xs text-slate-500 font-medium mt-0.5">
+                    Official record of Staff and Student Members
+                  </p>
+                </div>
+                <button
+                  onClick={() => setSelectedPopupYear(null)}
+                  className="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
+                  aria-label="Close modal"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+
+              {/* Scrollable Content */}
+              <div className="p-6 overflow-y-auto space-y-6 flex-grow">
+                {modalLoading ? (
+                  <div className="py-12 flex flex-col items-center justify-center">
+                    <Loader2 className="w-8 h-8 border-4 border-blue-500/10 border-t-blue-600 rounded-full animate-spin" />
+                    <p className="mt-2 text-slate-500 text-xs font-semibold">Loading members directory...</p>
+                  </div>
+                ) : modalMembers.length === 0 ? (
+                  <div className="py-12 text-center text-slate-500">
+                    <Users className="w-12 h-12 mx-auto text-slate-300 mb-2" />
+                    <p className="text-sm font-semibold">No member records found for this year.</p>
+                    <p className="text-xs text-gray-400 mt-1">Please populate the Supabase table <code className="bg-slate-100 px-1.5 py-0.5 rounded font-mono">ieee_member_directory</code>.</p>
+                  </div>
+                ) : (
+                  <div className="border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+                    <table className="w-full border-collapse">
+                      <thead className="bg-[#0C447C] text-white text-xs">
+                        <tr>
+                          <th className="px-4 py-3 text-left w-20">S.No.</th>
+                          <th className="px-4 py-3 text-left">Name</th>
+                          <th className="px-4 py-3 text-left">Designation / Course</th>
+                          <th className="px-4 py-3 text-left w-24">Year</th>
+                        </tr>
+                      </thead>
+                      <tbody className="text-xs text-slate-800">
+                        {/* Staff Category */}
+                        {staffMembers.length > 0 && (
+                          <>
+                            <tr className="bg-slate-50 border-y border-slate-200">
+                              <td colSpan={4} className="px-4 py-2.5 text-slate-800 font-bold uppercase tracking-wider text-[11px] text-center bg-slate-100/80">
+                                Staff
+                              </td>
+                            </tr>
+                            {staffMembers.map((m, index) => (
+                              <tr key={m.id || index} className="border-b border-slate-100 hover:bg-slate-50/50 transition">
+                                <td className="px-4 py-2.5 font-medium text-slate-500">{m.s_no || index + 1}.</td>
+                                <td className="px-4 py-2.5 font-bold text-slate-900">{m.name}</td>
+                                <td className="px-4 py-2.5 text-slate-600 font-medium">{m.designation_course}</td>
+                                <td className="px-4 py-2.5 text-slate-500 font-medium">{m.year}</td>
+                              </tr>
+                            ))}
+                          </>
+                        )}
+
+                        {/* Student Category */}
+                        {studentMembers.length > 0 && (
+                          <>
+                            <tr className="bg-slate-50 border-y border-slate-200">
+                              <td colSpan={4} className="px-4 py-2.5 text-slate-800 font-bold uppercase tracking-wider text-[11px] text-center bg-slate-100/80">
+                                Student Members
+                              </td>
+                            </tr>
+                            {studentMembers.map((m, index) => (
+                              <tr key={m.id || index} className="border-b border-slate-100 hover:bg-slate-50/50 transition">
+                                <td className="px-4 py-2.5 font-medium text-slate-500">{m.s_no || (staffMembers.length + index + 1)}.</td>
+                                <td className="px-4 py-2.5 font-bold text-slate-900">{m.name}</td>
+                                <td className="px-4 py-2.5 text-slate-600 font-medium">{m.designation_course}</td>
+                                <td className="px-4 py-2.5 text-slate-500 font-medium">{m.year}</td>
+                              </tr>
+                            ))}
+                          </>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+
+              {/* Footer */}
+              <div className="px-6 py-4 border-t border-slate-150 bg-slate-50 flex justify-end">
+                <button
+                  onClick={() => setSelectedPopupYear(null)}
+                  className="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-800 text-xs font-bold rounded-xl transition shadow-sm hover:shadow"
+                >
+                  Close Directory
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
