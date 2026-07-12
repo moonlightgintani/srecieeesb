@@ -17,6 +17,7 @@ import {
   Download,
   Building2,
   ChevronRight,
+  ChevronLeft,
   Shield,
   Star,
   History,
@@ -494,8 +495,41 @@ const TeamPage = () => {
           .select("*")
           .eq("year", selectedPopupYear)
           .order("s_no", { ascending: true });
-        if (data) {
+
+        if (data && data.length > 0) {
           setModalMembers(data);
+        } else if (selectedPopupYear === CURRENT_YEAR) {
+          // Fallback to active memory states for CURRENT_YEAR
+          const bearersList = officeBearers.map((b, idx) => {
+            const isStaff = b.role?.toLowerCase().includes("counsellor") || 
+                            b.role?.toLowerCase().includes("counselor") || 
+                            b.role?.toLowerCase().includes("advisor");
+            return {
+              id: `bearer-${b.id || idx}`,
+              name: b.name,
+              designation_course: b.role ? `${b.role}${b.department ? ` (${b.department})` : ""}` : (b.department || ""),
+              member_type: isStaff ? "Staff" : "Student",
+              year: CURRENT_YEAR
+            };
+          });
+
+          const execsList = executiveMembers.map((e, idx) => {
+            return {
+              id: `exec-${e.id || idx}`,
+              name: e.name,
+              designation_course: e.role ? `${e.role}${e.department ? ` (${e.department})` : ""}` : `Executive Committee Member${e.department ? ` (${e.department})` : ""}`,
+              member_type: "Student",
+              year: CURRENT_YEAR
+            };
+          });
+
+          const combined = [...bearersList, ...execsList].map((item, idx) => ({
+            ...item,
+            s_no: idx + 1
+          }));
+          setModalMembers(combined);
+        } else {
+          setModalMembers([]);
         }
       } catch (err) {
         console.error("Error fetching year members:", err);
@@ -504,7 +538,7 @@ const TeamPage = () => {
       }
     };
     fetchYearMembers();
-  }, [selectedPopupYear]);
+  }, [selectedPopupYear, officeBearers, executiveMembers]);
 
   // --- SUPABASE DATA FETCH ---
   useEffect(() => {
@@ -627,6 +661,7 @@ const TeamPage = () => {
 
   // --- MEMBERSHIP ANALYTICS MEMOS ---
   const years = useMemo(() => [...new Set(memberCounts.map((r) => r.year))].sort((a, b) => b - a), [memberCounts]);
+  const yearsAsc = useMemo(() => [...years].reverse(), [years]);
   const latestCount = memberCounts[0];
   const prevCount = memberCounts[1];
   const maxTotal = Math.max(...memberCounts.map((r) => r.total_members), 1);
@@ -1182,14 +1217,42 @@ const TeamPage = () => {
               className="bg-white rounded-3xl shadow-2xl max-w-4xl w-full max-h-[85vh] overflow-hidden flex flex-col border border-slate-200/80"
             >
               {/* Header */}
-              <div className="flex items-center justify-between px-6 py-5 border-b border-slate-150 bg-slate-50/50">
-                <div>
-                  <h3 className="text-lg font-black text-slate-900">
-                    IEEE Members Directory - Year {selectedPopupYear}
-                  </h3>
-                  <p className="text-xs text-slate-500 font-medium mt-0.5">
-                    Official record of Staff and Student Members
-                  </p>
+              <div className="flex items-center justify-between px-6 py-5 border-b border-slate-200/80 bg-slate-50/50">
+                <div className="flex items-center gap-3.5">
+                  {/* Previous Year Button */}
+                  <button
+                    disabled={selectedPopupYear === null || yearsAsc.indexOf(selectedPopupYear) <= 0}
+                    onClick={() => {
+                      const idx = selectedPopupYear !== null ? yearsAsc.indexOf(selectedPopupYear) : -1;
+                      if (idx > 0) setSelectedPopupYear(yearsAsc[idx - 1]);
+                    }}
+                    className="p-1.5 rounded-lg border border-slate-200 bg-white text-slate-500 hover:text-slate-800 hover:bg-slate-50 hover:border-slate-300 disabled:opacity-25 disabled:cursor-not-allowed transition-all shadow-sm flex items-center justify-center"
+                    title="Previous Year"
+                  >
+                    <ChevronLeft size={16} />
+                  </button>
+
+                  <div>
+                    <h3 className="text-lg font-black text-slate-900">
+                      IEEE Members Directory - Year {selectedPopupYear}
+                    </h3>
+                    <p className="text-xs text-slate-500 font-medium mt-0.5">
+                      Official record of Staff and Student Members
+                    </p>
+                  </div>
+
+                  {/* Next Year Button */}
+                  <button
+                    disabled={selectedPopupYear === null || yearsAsc.indexOf(selectedPopupYear) >= yearsAsc.length - 1}
+                    onClick={() => {
+                      const idx = selectedPopupYear !== null ? yearsAsc.indexOf(selectedPopupYear) : -1;
+                      if (idx !== -1 && idx < yearsAsc.length - 1) setSelectedPopupYear(yearsAsc[idx + 1]);
+                    }}
+                    className="p-1.5 rounded-lg border border-slate-200 bg-white text-slate-500 hover:text-slate-800 hover:bg-slate-50 hover:border-slate-300 disabled:opacity-25 disabled:cursor-not-allowed transition-all shadow-sm flex items-center justify-center"
+                    title="Next Year"
+                  >
+                    <ChevronRight size={16} />
+                  </button>
                 </div>
                 <button
                   onClick={() => setSelectedPopupYear(null)}

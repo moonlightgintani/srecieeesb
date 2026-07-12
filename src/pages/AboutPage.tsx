@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { CalendarRange, Trophy, Globe2, Users, Rocket, Sparkles, BookOpen, Award, ShieldCheck, Target, Heart } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
+import { usePageContent } from "@/hooks/useContent";
 import journeyImage from "@/assets/IMG20251015144015.jpg";
 
 const milestones = [
@@ -69,7 +70,7 @@ const pillars = [
 ];
 
 const AboutPage = () => {
-  const { data: counselor } = useQuery({
+  const { data: counselor } = useQuery<any>({
     queryKey: ["counselor_image"],
     queryFn: async () => {
       const { data } = await supabase
@@ -81,6 +82,20 @@ const AboutPage = () => {
       return data;
     }
   });
+
+  const { data: principal } = useQuery<any>({
+    queryKey: ["principal_info"],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("senior_members")
+        .select("image_url, name")
+        .ilike("current_role", "%Principal%")
+        .maybeSingle();
+      return data;
+    }
+  });
+
+  const { data: content } = usePageContent("about");
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-800 relative overflow-hidden font-sans">
@@ -108,11 +123,48 @@ const AboutPage = () => {
                   <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 font-serif">IEEE SREC</span>
                </h1>
                <p className="text-slate-600 text-base md:text-lg leading-relaxed">
-                  The IEEE Student Branch of Sri Ramakrishna Engineering College, operating since June 11th, 2001 under the IEEE Madras Section, is a vibrant hub promoting continuous technical excellence and professional evolution.
+                  {content?.intro_text || "The IEEE Student Branch of Sri Ramakrishna Engineering College, operating since June 11th, 2001 under the IEEE Madras Section, is a vibrant hub promoting continuous technical excellence and professional evolution."}
                </p>
             </div>
 
-            <div className="lg:col-span-5">
+            <div className="lg:col-span-5 space-y-6">
+               {/* Principal Message Card */}
+               <motion.div 
+                 initial={{ opacity: 0, y: 30 }}
+                 whileInView={{ opacity: 1, y: 0 }}
+                 viewport={{ once: true }}
+                 className="bg-gradient-to-br from-slate-900 to-indigo-950 text-white rounded-3xl p-8 border border-slate-800 shadow-xl relative overflow-hidden"
+               >
+                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(99,102,241,0.1),transparent_60%)] pointer-events-none" />
+                  <div className="relative z-10">
+                     <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 text-indigo-400 font-semibold text-xs tracking-widest uppercase mb-6 border border-indigo-500/20">
+                       <Award size={12} className="animate-pulse" />
+                       <span>Principal Message</span>
+                     </span>
+                     <p className="text-slate-100 text-sm italic font-serif leading-relaxed mb-6">
+                       "{content?.principal_message || "Fostering innovation, research, and technical excellence to empower young minds to solve global challenges with ethical values and leadership."}"
+                     </p>
+                     
+                     <div className="flex items-center gap-4">
+                       {principal?.image_url ? (
+                         <img 
+                           src={principal.image_url} 
+                           alt={principal.name || "Dr. A. Soundarrajan"} 
+                           className="w-12 h-12 rounded-full object-cover shadow-md border border-white/10 shrink-0" 
+                         />
+                       ) : (
+                         <div className="w-12 h-12 rounded-full bg-gradient-to-br from-indigo-600 to-blue-600 flex items-center justify-center text-white font-serif font-black text-lg shadow-md border border-white/10 shrink-0">
+                           AS
+                         </div>
+                       )}
+                       <div>
+                         <h4 className="font-bold text-slate-100 text-sm font-serif">{principal?.name || "Dr. A. Soundarrajan"}</h4>
+                         <p className="text-slate-400 text-[10px] font-semibold tracking-wider uppercase">Principal, SREC</p>
+                       </div>
+                     </div>
+                  </div>
+               </motion.div>
+
                {/* Counselor Message Card */}
                <motion.div 
                  initial={{ opacity: 0, y: 30 }}
@@ -127,7 +179,7 @@ const AboutPage = () => {
                        <span>Counselor Message</span>
                      </span>
                      <p className="text-slate-100 text-sm italic font-serif leading-relaxed mb-6">
-                       "Empowering students to transcend boundaries and embrace the technological future with confidence, leadership, and ethical responsibility."
+                       "{content?.counselor_message || "Empowering students to transcend boundaries and embrace the technological future with confidence, leadership, and ethical responsibility."}"
                      </p>
                      
                      <div className="flex items-center gap-4">
