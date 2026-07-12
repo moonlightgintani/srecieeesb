@@ -165,7 +165,7 @@ const AdminDashboard = () => {
   const handleLogout = async () => {
     sessionStorage.removeItem("admin_auth");
     await supabase.auth.signOut();
-    navigate("/");
+    navigate("/admin-login");
   };
 
 
