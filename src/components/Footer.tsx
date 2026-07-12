@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import ieeeLogo from "@/assets/ieee-logo.png";
 import srecLogo from "@/assets/srec-logo.png";
 import snrLogo from "@/assets/snr-trust-logo.png";
-import { Mail, MapPin, Phone, Globe, ChevronRight, Sparkles } from "lucide-react";
+import { Mail, MapPin, Phone, Globe, ChevronRight, Network } from "lucide-react";
 import { FaInstagram, FaLinkedin, FaYoutube } from "react-icons/fa";
 
 const linkGroups = [
@@ -117,7 +117,7 @@ const Footer = () => (
         <p className="flex items-center">
           © {new Date().getFullYear()} IEEE Student Branch SREC. All rights reserved.
           <a href="https://surya-ruddy.vercel.app/" target="_blank" rel="noopener noreferrer" className="text-slate-500 hover:text-[#00a6d6] transition-colors ml-2 inline-flex items-center gap-1" aria-label="Surya Ruddy Portfolio" title="Developer Portfolio">
-            <Sparkles size={14} />
+            <Network size={14} />
           </a>
         </p>
         <div className="flex gap-4 items-center">
