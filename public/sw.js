@@ -1,4 +1,4 @@
-const CACHE_NAME = "srec-ieee-cache-v4";
+const CACHE_NAME = "srec-ieee-cache-v5";
 const urlsToCache = [
   "/manifest.json",
   "/ieee.png",
