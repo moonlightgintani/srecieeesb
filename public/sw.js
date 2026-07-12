@@ -34,6 +34,9 @@ self.addEventListener("activate", event => {
 // Fetch event - Network First for HTML/nav, Stale-While-Revalidate for other static assets
 self.addEventListener("fetch", event => {
   const request = event.request;
+  if (request.method !== "GET") {
+    return;
+  }
   const url = new URL(request.url);
 
   // Use Network-First for main page and HTML requests to avoid caching outdated hashed assets

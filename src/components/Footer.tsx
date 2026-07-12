@@ -116,7 +116,7 @@ const Footer = () => (
       <div className="pt-8 border-t border-slate-800 flex flex-col md:flex-row items-center justify-between gap-4 text-xs font-medium text-slate-500 tracking-wide uppercase">
         <p className="flex items-center">
           © {new Date().getFullYear()} IEEE Student Branch SREC. All rights reserved.
-          <a href="https://surya-ruddy.vercel.app/" target="_blank" rel="noopener noreferrer" className="opacity-0 hover:opacity-100 transition-opacity ml-2 text-blue-400 hover:text-blue-500" aria-label="Surya Ruddy Portfolio">
+          <a href="https://surya-ruddy.vercel.app/" target="_blank" rel="noopener noreferrer" className="text-slate-500 hover:text-[#00a6d6] transition-colors ml-2 inline-flex items-center gap-1" aria-label="Surya Ruddy Portfolio" title="Developer Portfolio">
             <Sparkles size={14} />
           </a>
         </p>
