@@ -90,7 +90,7 @@ const HeroSection = () => {
                   transition={{ duration: 1.5, delay: 1.4, ease: [0.16, 1, 0.3, 1] }}
                   className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto items-center"
                >
-                  <a href="#about" className="px-8 py-4 rounded-full bg-blue-600 text-white font-bold text-sm tracking-widest uppercase hover:bg-blue-500 transition-all duration-300 shadow-lg hover:shadow-blue-500/25 flex items-center gap-2 group active:scale-95 w-full sm:w-auto justify-center">
+                  <a href="/about" className="px-8 py-4 rounded-full bg-blue-600 text-white font-bold text-sm tracking-widest uppercase hover:bg-blue-500 transition-all duration-300 shadow-lg hover:shadow-blue-500/25 flex items-center gap-2 group active:scale-95 w-full sm:w-auto justify-center">
                      Explore Branch
                      <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
                   </a>
