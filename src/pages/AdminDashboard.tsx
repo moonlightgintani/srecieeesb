@@ -102,6 +102,41 @@ const AdminDashboard = () => {
   });
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
+  // Group real events by month dynamically
+  const monthlyEventData = useMemo(() => {
+    const counts = Array(12).fill(0);
+    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    
+    activities.forEach(act => {
+      if (act.date) {
+        const dateObj = new Date(act.date);
+        if (!isNaN(dateObj.getTime())) {
+          const month = dateObj.getMonth();
+          counts[month]++;
+        }
+      }
+    });
+
+    return monthNames.map((name, index) => ({
+      month: name,
+      val: counts[index]
+    }));
+  }, [activities]);
+
+  // Calculate real student and professional distribution
+  const memberDistribution = useMemo(() => {
+    if (memberRows.length > 0) {
+      const latest = memberRows[0];
+      const students = latest.student_members || 0;
+      const pros = latest.professional_members || 0;
+      const total = latest.total_members || (students + pros) || 1;
+      const studentPercent = Math.round((students / total) * 100);
+      const profPercent = 100 - studentPercent;
+      return { studentPercent, profPercent, studentCount: students, profCount: pros };
+    }
+    return { studentPercent: 75, profPercent: 25, studentCount: 150, profCount: 50 };
+  }, [memberRows]);
+
 
   const [activitiesLoading, setActivitiesLoading] = useState(false);
   const [activitiesError, setActivitiesError] = useState("");
