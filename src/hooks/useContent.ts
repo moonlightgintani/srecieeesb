@@ -10,7 +10,10 @@ export const usePageContent = (pageKey: string) => {
         .select("content_key, content_text")
         .eq("page_key", pageKey);
 
-      if (error) throw error;
+      if (error) {
+        console.warn("page_content query failed (table might be missing in Supabase):", error.message);
+        return {};
+      }
 
       const contentMap: Record<string, string> = {};
       if (data) {
