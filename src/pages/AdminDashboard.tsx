@@ -906,6 +906,17 @@ const AdminDashboard = () => {
               <span className="absolute -top-1 -right-1 w-2 h-2 bg-blue-600 rounded-full"></span>
             </button>
 
+            {/* Mobile Portfolio Link */}
+            <a
+              href="https://surya-ruddy.vercel.app/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="lg:hidden text-slate-500 hover:text-[#00a6d6] transition-colors p-2 flex items-center justify-center border border-slate-200 rounded-lg bg-slate-50"
+              title="My Portfolio"
+            >
+              <Globe size={18} />
+            </a>
+
             {/* Profile Dropdown */}
             <div className="flex items-center gap-3 border-l border-slate-200 pl-6">
               <div className="text-right hidden sm:block">

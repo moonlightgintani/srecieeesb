@@ -121,12 +121,20 @@ const FloatingRobotAgent = () => {
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Trigger speech bubble popup after 2.5s delay
+  // Trigger speech bubble popup after 2.5s delay and auto-hide after 5 seconds
   useEffect(() => {
-    const timer = setTimeout(() => {
+    let hideTimer: any;
+    const showTimer = setTimeout(() => {
       setShowWelcomeBubble(true);
+      hideTimer = setTimeout(() => {
+        setShowWelcomeBubble(false);
+      }, 5000);
     }, 2500);
-    return () => clearTimeout(timer);
+    
+    return () => {
+      clearTimeout(showTimer);
+      if (hideTimer) clearTimeout(hideTimer);
+    };
   }, []);
 
   useEffect(() => {
