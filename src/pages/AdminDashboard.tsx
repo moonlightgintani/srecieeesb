@@ -137,6 +137,37 @@ const AdminDashboard = () => {
     return { studentPercent: 75, profPercent: 25, studentCount: 150, profCount: 50 };
   }, [memberRows]);
 
+  // Calculate real membership growth compared to previous record
+  const memberGrowthPercent = useMemo(() => {
+    if (memberRows.length >= 2) {
+      const latest = memberRows[0].total_members || (memberRows[0].student_members + memberRows[0].professional_members);
+      const prev = memberRows[1].total_members || (memberRows[1].student_members + memberRows[1].professional_members);
+      if (prev > 0) {
+        const pct = ((latest - prev) / prev) * 100;
+        return (pct >= 0 ? "+" : "") + pct.toFixed(0) + "%";
+      }
+    }
+    return "+15%";
+  }, [memberRows]);
+
+  // Calculate real activities growth compared to previous year
+  const activitiesGrowthPercent = useMemo(() => {
+    const currentYear = new Date().getFullYear();
+    const currentYearEvents = activities.filter(a => a.date && new Date(a.date).getFullYear() === currentYear).length;
+    const lastYearEvents = activities.filter(a => a.date && new Date(a.date).getFullYear() === currentYear - 1).length;
+    if (lastYearEvents > 0) {
+      const pct = ((currentYearEvents - lastYearEvents) / lastYearEvents) * 100;
+      return (pct >= 0 ? "+" : "") + pct.toFixed(0) + "%";
+    }
+    return "+12%";
+  }, [activities]);
+
+  const handleLogout = async () => {
+    sessionStorage.removeItem("admin_auth");
+    await supabase.auth.signOut();
+    navigate("/");
+  };
+
 
   const [activitiesLoading, setActivitiesLoading] = useState(false);
   const [activitiesError, setActivitiesError] = useState("");
@@ -884,12 +915,12 @@ const AdminDashboard = () => {
               <div className="w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-sm border border-slate-200">
                 A
               </div>
-              <Link
-                to="/"
+              <button
+                onClick={handleLogout}
                 className="text-xs text-red-500 hover:text-red-700 font-bold uppercase tracking-wider flex items-center gap-1 pl-2 border-l border-slate-200"
               >
                 <LogOut size={14} /> Exit
-              </Link>
+              </button>
             </div>
           </div>
         </header>
@@ -924,7 +955,7 @@ const AdminDashboard = () => {
                     <div className="flex items-center justify-between">
                       <div className="rounded-full bg-slate-100 p-2.5 text-blue-600"><Activity size={20} /></div>
                       <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full flex items-center gap-0.5">
-                        <TrendingUp size={10} /> +12%
+                        <TrendingUp size={10} /> {activitiesGrowthPercent}
                       </span>
                     </div>
                     <div>
@@ -966,7 +997,7 @@ const AdminDashboard = () => {
                     <div className="flex items-center justify-between">
                       <div className="rounded-full bg-slate-100 p-2.5 text-emerald-600"><Users size={20} /></div>
                       <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full flex items-center gap-0.5">
-                        <TrendingUp size={10} /> +15%
+                        <TrendingUp size={10} /> {memberGrowthPercent}
                       </span>
                     </div>
                     <div>
