@@ -4,7 +4,7 @@ import { supabase } from "@/lib/supabase";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import OfficeBearersAdmin from "@/components/OfficeBearersAdmin";
-import { Activity, Users, Settings, Briefcase, FileText, Banknote, ShieldCheck, Image as ImageIcon, LayoutDashboard, LogOut, TrendingUp } from "lucide-react";
+import { Activity, Users, Settings, Briefcase, FileText, Banknote, ShieldCheck, Image as ImageIcon, LayoutDashboard, LogOut, TrendingUp, Search, Bell, Cpu } from "lucide-react";
 
 type ActivityRow = {
   id: number;
@@ -66,7 +66,7 @@ type SeniorMember = {
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<"overview" | "activities" | "office" | "members" | "plans" | "funding" | "senior">("overview");
+  const [activeTab, setActiveTab] = useState<"overview" | "activities" | "office" | "members" | "plans" | "funding" | "senior" | "cms_landing" | "cms_about" | "cms_contact" | "cms_advanced" | "admin_users">("overview");
 
   const [activities, setActivities] = useState<ActivityRow[]>([]);
   const [officeRows, setOfficeRows] = useState<OfficeBearer[]>([]);
@@ -74,6 +74,33 @@ const AdminDashboard = () => {
   const [annualPlans, setAnnualPlans] = useState<AnnualPlan[]>([]);
   const [fundingRequests, setFundingRequests] = useState<FundingSubmission[]>([]);
   const [seniorMembers, setSeniorMembers] = useState<SeniorMember[]>([]);
+
+  type PageContentRow = {
+    id: number;
+    page_key: string;
+    content_key: string;
+    content_text: string;
+  };
+  const [pageContents, setPageContents] = useState<PageContentRow[]>([]);
+  const [contentLoading, setContentLoading] = useState(false);
+  const [editingContentId, setEditingContentId] = useState<number | null>(null);
+  const [contentForm, setContentForm] = useState({
+    page_key: "",
+    content_key: "",
+    content_text: "",
+  });
+
+  type AdminUserRow = {
+    id: number;
+    username: string;
+    created_at: string;
+  };
+  const [adminsList, setAdminsList] = useState<AdminUserRow[]>([]);
+  const [adminForm, setAdminForm] = useState({
+    username: "",
+    password: "",
+  });
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
 
   const [activitiesLoading, setActivitiesLoading] = useState(false);
@@ -193,7 +220,28 @@ const AdminDashboard = () => {
     setSeniorMembers(data || []);
   };
 
+  const fetchPageContents = async () => {
+    setContentLoading(true);
+    const { data } = await supabase
+      .from("page_content")
+      .select("*")
+      .order("page_key", { ascending: true })
+      .order("content_key", { ascending: true });
+    setPageContents(data || []);
+    setContentLoading(false);
+  };
 
+  const fetchAdmins = async () => {
+    const { data, error } = await supabase
+      .from("admins")
+      .select("id, username, created_at")
+      .order("username", { ascending: true });
+    if (!error) {
+      setAdminsList(data || []);
+    } else {
+      console.error("Error fetching admins:", error);
+    }
+  };
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -210,7 +258,8 @@ const AdminDashboard = () => {
     fetchAnnualPlans();
     fetchFundingRequests();
     fetchSeniorMembers();
-
+    fetchPageContents();
+    fetchAdmins();
   }, [navigate]);
 
   const resetActivityForm = () => {
@@ -469,6 +518,83 @@ const AdminDashboard = () => {
     fetchSeniorMembers();
   };
 
+  const resetContentForm = () => {
+    setEditingContentId(null);
+    setContentForm({
+      page_key: "",
+      content_key: "",
+      content_text: "",
+    });
+  };
+
+  const submitContent = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!contentForm.page_key || !contentForm.content_key || !contentForm.content_text) {
+      alert("Please fill in all fields.");
+      return;
+    }
+    const payload = {
+      page_key: contentForm.page_key,
+      content_key: contentForm.content_key,
+      content_text: contentForm.content_text,
+    };
+    if (editingContentId) {
+      const { error } = await supabase.from("page_content").update(payload).eq("id", editingContentId);
+      if (error) { alert("Error: " + error.message); return; }
+    } else {
+      const { error } = await supabase.from("page_content").insert([payload]);
+      if (error) { alert("Error: " + error.message); return; }
+    }
+    resetContentForm();
+    fetchPageContents();
+  };
+
+  const deleteContent = async (id: number) => {
+    const ok = window.confirm("Delete this content key?");
+    if (!ok) return;
+    const { error } = await supabase.from("page_content").delete().eq("id", id);
+    if (error) { alert("Error: " + error.message); return; }
+    fetchPageContents();
+  };
+
+  const upsertContent = async (page_key: string, content_key: string, content_text: string) => {
+    const { error } = await supabase
+      .from("page_content")
+      .upsert({ page_key, content_key, content_text }, { onConflict: "page_key,content_key" });
+    if (error) {
+      alert("Error saving: " + error.message);
+    } else {
+      fetchPageContents();
+    }
+  };
+
+  const addAdminUser = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!adminForm.username || !adminForm.password) {
+      alert("Please fill in both fields.");
+      return;
+    }
+    const { error } = await supabase.from("admins").insert([adminForm]);
+    if (error) {
+      alert("Error adding admin: " + error.message);
+    } else {
+      setAdminForm({ username: "", password: "" });
+      fetchAdmins();
+      alert("Admin user added successfully!");
+    }
+  };
+
+  const deleteAdminUser = async (id: number) => {
+    const ok = window.confirm("Are you sure you want to delete this admin account?");
+    if (!ok) return;
+    const { error } = await supabase.from("admins").delete().eq("id", id);
+    if (error) {
+      alert("Error deleting admin: " + error.message);
+    } else {
+      fetchAdmins();
+    }
+  };
+
 
 
   const filteredActivities = useMemo(() => {
@@ -498,128 +624,299 @@ const AdminDashboard = () => {
     { id: "plans", label: "Annual Plans", icon: <FileText size={18} /> },
     { id: "funding", label: "Funding", icon: <Banknote size={18} /> },
     { id: "senior", label: "Senior Members", icon: <ShieldCheck size={18} /> },
+    { id: "cms_landing", label: "Landing CMS", icon: <FileText size={18} /> },
+    { id: "cms_about", label: "About CMS", icon: <FileText size={18} /> },
+    { id: "cms_contact", label: "Contact CMS", icon: <FileText size={18} /> },
+    { id: "cms_advanced", label: "Advanced CMS", icon: <Settings size={18} /> },
+    { id: "admin_users", label: "Admin Accounts", icon: <ShieldCheck size={18} /> },
 
   ] as const;
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#f8fafc] font-sans">
+    <div className="flex min-h-screen bg-slate-50 font-sans text-slate-600">
+      <style>{`
+        .no-scrollbar::-webkit-scrollbar {
+          display: none;
+        }
+        .no-scrollbar {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+      `}</style>
       <Navbar />
 
-      <div className="flex flex-1 w-full mx-auto justify-center max-w-[1600px]">
-        {/* DESKTOP SIDEBAR */}
-        <aside className="hidden lg:flex flex-col w-[260px] xl:w-[280px] bg-white border-r border-slate-200 sticky top-0 h-screen overflow-y-auto shrink-0 shadow-sm z-30">
-          <div className="px-6 py-8">
-            <h1 className="text-xl xl:text-2xl font-black tracking-wider text-slate-900 border-b border-slate-100 pb-3 mb-2">ADMIN PORTAL</h1>
-            <p className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-[#0b3b8f]">
-              <Settings size={14} /> System Control
-            </p>
+      {/* LEFT SIDEBAR (TailAdmin Style) */}
+      <aside className="hidden lg:flex flex-col w-[280px] bg-white border-r border-slate-200 shrink-0 h-screen sticky top-0 overflow-y-auto">
+        {/* Brand Logo & Name */}
+        <div className="px-6 py-6 flex items-center gap-3 border-b border-slate-100">
+          <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-blue-600 text-white shadow-md">
+            <Cpu className="h-5 w-5" />
           </div>
-          <nav className="flex-1 px-4 space-y-1.5 pb-6">
+          <div>
+            <h1 className="text-xl font-bold tracking-tight text-slate-800">TailAdmin</h1>
+            <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">IEEE SB SREC</p>
+          </div>
+        </div>
+
+        {/* Menu Nav */}
+        <div className="flex-1 px-4 py-6 space-y-7">
+          {/* Group 1: MENU */}
+          <div className="space-y-2">
+            <p className="px-3 text-[10px] font-bold text-slate-400 uppercase tracking-widest">MENU</p>
+            <div className="space-y-1">
+              <button
+                onClick={() => setActiveTab("overview")}
+                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-semibold transition-all ${
+                  activeTab === "overview"
+                    ? "bg-blue-50 text-blue-600"
+                    : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                }`}
+              >
+                <div className="flex items-center gap-2.5">
+                  <LayoutDashboard size={18} />
+                  <span>Dashboard</span>
+                </div>
+              </button>
+            </div>
+          </div>
+
+          {/* Group 2: WEBSITE CONTENT */}
+          <div className="space-y-2">
+            <p className="px-3 text-[10px] font-bold text-slate-400 uppercase tracking-widest">CONTENT</p>
+            <div className="space-y-1">
+              {[
+                { id: "activities", label: "Activities", icon: <Activity size={18} /> },
+                { id: "office", label: "Office Bearers", icon: <Briefcase size={18} /> },
+                { id: "members", label: "Members Track", icon: <Users size={18} /> },
+                { id: "plans", label: "Annual Plans", icon: <FileText size={18} /> },
+                { id: "funding", label: "Funding Requests", icon: <Banknote size={18} /> },
+                { id: "senior", label: "Senior Members", icon: <ShieldCheck size={18} /> }
+              ].map((item) => (
+                <button
+                  key={item.id}
+                  onClick={() => setActiveTab(item.id as any)}
+                  className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-semibold transition-all ${
+                    activeTab === item.id
+                      ? "bg-blue-50 text-blue-600"
+                      : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                  }`}
+                >
+                  <div className="flex items-center gap-2.5">
+                    {item.icon}
+                    <span>{item.label}</span>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Group 3: CMS CHANNELS */}
+          <div className="space-y-2">
+            <p className="px-3 text-[10px] font-bold text-slate-400 uppercase tracking-widest">CMS PAGES</p>
+            <div className="space-y-1">
+              {[
+                { id: "cms_landing", label: "Landing CMS", icon: <FileText size={18} /> },
+                { id: "cms_about", label: "About CMS", icon: <FileText size={18} /> },
+                { id: "cms_contact", label: "Contact CMS", icon: <FileText size={18} /> },
+                { id: "cms_advanced", label: "Advanced CMS", icon: <Settings size={18} /> }
+              ].map((item) => (
+                <button
+                  key={item.id}
+                  onClick={() => setActiveTab(item.id as any)}
+                  className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-semibold transition-all ${
+                    activeTab === item.id
+                      ? "bg-blue-50 text-blue-600"
+                      : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                  }`}
+                >
+                  <div className="flex items-center gap-2.5">
+                    {item.icon}
+                    <span>{item.label}</span>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Group 4: SYSTEM */}
+          <div className="space-y-2">
+            <p className="px-3 text-[10px] font-bold text-slate-400 uppercase tracking-widest">SYSTEM</p>
+            <div className="space-y-1">
+              <button
+                onClick={() => setActiveTab("admin_users")}
+                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-semibold transition-all ${
+                  activeTab === "admin_users"
+                    ? "bg-blue-50 text-blue-600"
+                    : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                }`}
+              >
+                <div className="flex items-center gap-2.5">
+                  <ShieldCheck size={18} />
+                  <span>Admin Accounts</span>
+                </div>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Promo Card at bottom of sidebar */}
+        <div className="mx-4 my-6 p-4 bg-slate-50 border border-slate-150 rounded-2xl text-center flex flex-col gap-2">
+          <h4 className="text-xs font-bold text-slate-800">IEEE SB SREC Panel</h4>
+          <p className="text-[10px] text-slate-500">Manage all student chapter updates and records efficiently.</p>
+          <a href="https://ieee.org" target="_blank" rel="noreferrer" className="rounded-lg bg-blue-600 py-2 text-[11px] font-semibold text-white hover:bg-blue-700 transition">
+            Visit IEEE Global
+          </a>
+        </div>
+      </aside>
+
+      {/* RIGHT CONTENT CONTAINER */}
+      <div className="flex-1 flex flex-col min-w-0 min-h-screen">
+        {/* TOP BAR */}
+        <header className="bg-white border-b border-slate-200 h-16 flex items-center justify-between px-6 sticky top-0 z-35">
+          <div className="flex items-center gap-2 w-96">
+            <Search size={18} className="text-slate-400 shrink-0" />
+            <input
+              type="text"
+              placeholder="Search database or type command..."
+              className="w-full text-sm bg-transparent border-0 focus:outline-none focus:ring-0 text-slate-700 placeholder-slate-400"
+            />
+            <kbd className="hidden sm:inline-flex h-5 select-none items-center gap-0.5 rounded border border-slate-200 bg-slate-50 px-1.5 font-mono text-[10px] font-medium text-slate-400">
+              <span className="text-xs">⌘</span>K
+            </kbd>
+          </div>
+
+          <div className="flex items-center gap-6">
+            {/* Notification icons */}
+            <button className="text-slate-500 hover:text-slate-800 transition relative">
+              <Bell size={20} />
+              <span className="absolute -top-1 -right-1 w-2 h-2 bg-blue-600 rounded-full"></span>
+            </button>
+
+            {/* Profile Dropdown */}
+            <div className="flex items-center gap-3 border-l border-slate-200 pl-6">
+              <div className="text-right hidden sm:block">
+                <p className="text-xs font-bold text-slate-800">Admin Manager</p>
+                <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">System admin</p>
+              </div>
+              <div className="w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-sm border border-slate-200">
+                A
+              </div>
+              <Link
+                to="/"
+                className="text-xs text-red-500 hover:text-red-700 font-bold uppercase tracking-wider flex items-center gap-1 pl-2 border-l border-slate-200"
+              >
+                <LogOut size={14} /> Exit
+              </Link>
+            </div>
+          </div>
+        </header>
+
+        {/* MOBILE NAVIGATION BAR (horizontal tabs shown only on mobile screen) */}
+        <div className="lg:hidden bg-white border-b border-slate-200 px-4 py-2 sticky top-16 z-30">
+          <nav className="flex overflow-x-auto gap-4 py-1 no-scrollbar snap-x">
             {tabs.map((tab) => (
               <button
                 key={tab.id}
-                onClick={() => { setActiveTab(tab.id as "overview" | "activities" | "office" | "members" | "plans" | "funding" | "senior"); window.scrollTo({ top: 0, behavior: "smooth"}); }}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-semibold transition-all duration-200 ${
+                onClick={() => { setActiveTab(tab.id as any); window.scrollTo({ top: 0, behavior: "smooth"}); }}
+                className={`flex whitespace-nowrap items-center gap-1.5 py-2 text-xs font-bold transition snap-start border-b-2 ${
                   activeTab === tab.id
-                    ? "bg-[#0b3b8f] text-white shadow-md shadow-[#0b3b8f]/20 scale-[1.02]"
-                    : "text-slate-600 hover:bg-slate-100 hover:text-[#0b3b8f]"
+                    ? "text-blue-600 border-blue-600"
+                    : "text-slate-400 border-transparent"
                 }`}
               >
-                {tab.icon} <span className="truncate">{tab.label}</span>
+                {tab.icon} {tab.label}
               </button>
             ))}
           </nav>
-          <div className="p-4 border-t border-slate-100 sticky bottom-0 bg-white">
-             <Link
-              to="/"
-              className="flex w-full justify-center items-center gap-2 rounded-xl bg-red-50 text-red-600 border border-red-100 px-5 py-3 font-semibold hover:bg-red-100 transition-colors"
-            >
-              <LogOut size={16} /> Exit Admin
-            </Link>
-          </div>
-        </aside>
+        </div>
 
         {/* MAIN PANEL */}
         <div className="flex-1 w-full min-w-0 flex flex-col relative">
-          {/* MOBILE NAV HORIZONTAL */}
-          <div className="lg:hidden bg-white border-b border-slate-200 sticky top-0 z-40 px-3 py-3 shadow-sm">
-             <nav className="flex overflow-x-auto gap-2 scrollbar-hide snap-x">
-               {tabs.map((tab) => (
-                  <button
-                    key={tab.id}
-                    onClick={() => { setActiveTab(tab.id as "overview" | "activities" | "office" | "members" | "plans" | "funding" | "senior"); window.scrollTo({ top: 0, behavior: "smooth"}); }}
-                    className={`flex whitespace-nowrap items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition snap-start border ${
-                      activeTab === tab.id
-                        ? "bg-[#0b3b8f] text-white border-[#0b3b8f] shadow-sm"
-                        : "bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100"
-                    }`}
-                  >
-                    {tab.icon} {tab.label}
-                  </button>
-               ))}
-             </nav>
-          </div>
-
-          <main className="flex-1 p-4 sm:p-6 lg:p-10 w-full max-w-[1200px] mx-auto pb-20">
+          <main className="flex-1 p-6 lg:p-10 w-full mx-auto pb-20">
             {activeTab === "overview" && (
               <div className="space-y-6">
-                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-                  <div className="rounded-2xl border border-blue-50 bg-white p-4 sm:p-6 shadow-sm hover:shadow-md transition">
-                    <div className="flex items-center gap-4">
-                      <div className="rounded-full bg-blue-100 p-3 text-blue-600"><Activity size={24} /></div>
-                      <div>
-                        <p className="text-sm font-medium text-slate-500">Activities</p>
-                        <h3 className="text-2xl font-bold text-slate-800">{activities.length}</h3>
-                      </div>
+                <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+                  {/* Card 1: Activities */}
+                  <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm hover:shadow-md transition flex flex-col justify-between h-36">
+                    <div className="flex items-center justify-between">
+                      <div className="rounded-full bg-slate-100 p-2.5 text-blue-600"><Activity size={20} /></div>
+                      <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full flex items-center gap-0.5">
+                        <TrendingUp size={10} /> +12%
+                      </span>
                     </div>
-                  </div>
-                  <div className="rounded-2xl border border-indigo-50 bg-white p-4 sm:p-6 shadow-sm hover:shadow-md transition">
-                    <div className="flex items-center gap-4">
-                      <div className="rounded-full bg-indigo-100 p-3 text-indigo-600"><Briefcase size={24} /></div>
-                      <div>
-                        <p className="text-sm font-medium text-slate-500">Office Bearers</p>
-                        <h3 className="text-2xl font-bold text-slate-800">{officeRows.length}</h3>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="rounded-2xl border border-sky-50 bg-white p-4 sm:p-6 shadow-sm hover:shadow-md transition">
-                    <div className="flex items-center gap-4">
-                      <div className="rounded-full bg-sky-100 p-3 text-sky-600"><ShieldCheck size={24} /></div>
-                      <div>
-                        <p className="text-sm font-medium text-slate-500">Senior Members</p>
-                        <h3 className="text-2xl font-bold text-slate-800">{seniorMembers.length}</h3>
-                      </div>
+                    <div>
+                      <h3 className="text-2xl font-bold text-slate-800 tracking-tight">{activities.length}</h3>
+                      <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mt-1">Activities</p>
                     </div>
                   </div>
 
-                </div>
+                  {/* Card 2: Office Bearers */}
+                  <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm hover:shadow-md transition flex flex-col justify-between h-36">
+                    <div className="flex items-center justify-between">
+                      <div className="rounded-full bg-slate-100 p-2.5 text-indigo-600"><Briefcase size={20} /></div>
+                      <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full flex items-center gap-0.5">
+                        <TrendingUp size={10} /> +8%
+                      </span>
+                    </div>
+                    <div>
+                      <h3 className="text-2xl font-bold text-slate-800 tracking-tight">{officeRows.length}</h3>
+                      <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mt-1">Bearers</p>
+                    </div>
+                  </div>
 
-                <div className="grid gap-6 md:grid-cols-3">
-                  <div className="rounded-2xl border border-emerald-50 bg-white p-4 sm:p-6 shadow-sm hover:shadow-md transition">
-                    <div className="flex items-center gap-4">
-                      <div className="rounded-full bg-emerald-100 p-3 text-emerald-600"><Users size={24} /></div>
-                      <div>
-                        <p className="text-sm font-medium text-slate-500">Member Track Records</p>
-                        <h3 className="text-2xl font-bold text-slate-800">{memberRows.length}</h3>
-                      </div>
+                  {/* Card 3: Senior Members */}
+                  <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm hover:shadow-md transition flex flex-col justify-between h-36">
+                    <div className="flex items-center justify-between">
+                      <div className="rounded-full bg-slate-100 p-2.5 text-sky-600"><ShieldCheck size={20} /></div>
+                      <span className="text-xs font-bold text-slate-400 bg-slate-50 px-2 py-0.5 rounded-full flex items-center gap-0.5">
+                        Stable
+                      </span>
+                    </div>
+                    <div>
+                      <h3 className="text-2xl font-bold text-slate-800 tracking-tight">{seniorMembers.length}</h3>
+                      <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mt-1">Seniors</p>
                     </div>
                   </div>
-                  <div className="rounded-2xl border border-amber-50 bg-white p-4 sm:p-6 shadow-sm hover:shadow-md transition">
-                    <div className="flex items-center gap-4">
-                      <div className="rounded-full bg-amber-100 p-3 text-amber-600"><FileText size={24} /></div>
-                      <div>
-                        <p className="text-sm font-medium text-slate-500">Annual Plans</p>
-                        <h3 className="text-2xl font-bold text-slate-800">{annualPlans.length}</h3>
-                      </div>
+
+                  {/* Card 4: Member Track Records */}
+                  <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm hover:shadow-md transition flex flex-col justify-between h-36">
+                    <div className="flex items-center justify-between">
+                      <div className="rounded-full bg-slate-100 p-2.5 text-emerald-600"><Users size={20} /></div>
+                      <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full flex items-center gap-0.5">
+                        <TrendingUp size={10} /> +15%
+                      </span>
+                    </div>
+                    <div>
+                      <h3 className="text-2xl font-bold text-slate-800 tracking-tight">{memberRows.length}</h3>
+                      <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mt-1">Years Tracked</p>
                     </div>
                   </div>
-                  <div className="rounded-2xl border border-rose-50 bg-white p-4 sm:p-6 shadow-sm hover:shadow-md transition">
-                    <div className="flex items-center gap-4">
-                      <div className="rounded-full bg-rose-100 p-3 text-rose-600"><Banknote size={24} /></div>
-                      <div>
-                        <p className="text-sm font-medium text-slate-500">Funding Requests</p>
-                        <h3 className="text-2xl font-bold text-slate-800">{fundingRequests.length}</h3>
-                      </div>
+
+                  {/* Card 5: Annual Plans */}
+                  <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm hover:shadow-md transition flex flex-col justify-between h-36">
+                    <div className="flex items-center justify-between">
+                      <div className="rounded-full bg-slate-100 p-2.5 text-amber-600"><FileText size={20} /></div>
+                      <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full flex items-center gap-0.5">
+                        Active
+                      </span>
+                    </div>
+                    <div>
+                      <h3 className="text-2xl font-bold text-slate-800 tracking-tight">{annualPlans.length}</h3>
+                      <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mt-1">Annual Plans</p>
+                    </div>
+                  </div>
+
+                  {/* Card 6: Funding Requests */}
+                  <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm hover:shadow-md transition flex flex-col justify-between h-36">
+                    <div className="flex items-center justify-between">
+                      <div className="rounded-full bg-slate-100 p-2.5 text-rose-600"><Banknote size={20} /></div>
+                      <span className="text-xs font-bold text-rose-600 bg-rose-50 px-2 py-0.5 rounded-full flex items-center gap-0.5">
+                        Pending
+                      </span>
+                    </div>
+                    <div>
+                      <h3 className="text-2xl font-bold text-slate-800 tracking-tight">{fundingRequests.length}</h3>
+                      <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mt-1">Funding Req</p>
                     </div>
                   </div>
                 </div>
@@ -1228,11 +1525,445 @@ const AdminDashboard = () => {
             )}
 
 
+            {activeTab === "cms_landing" && (
+              <div className="space-y-6">
+                <div>
+                  <h2 className="text-2xl font-black text-slate-800">Landing Page CMS</h2>
+                  <p className="text-sm text-slate-500 mt-1">Edit the main hero header and subdescription on the homepage.</p>
+                </div>
+                <LandingCMSForm 
+                  pageContents={pageContents} 
+                  onSave={upsertContent} 
+                />
+              </div>
+            )}
+
+            {activeTab === "cms_about" && (
+              <div className="space-y-6">
+                <div>
+                  <h2 className="text-2xl font-black text-slate-800">About Page CMS</h2>
+                  <p className="text-sm text-slate-500 mt-1">Edit the SREC intro description, Principal message and Counselor message quotes.</p>
+                </div>
+                <AboutCMSForm 
+                  pageContents={pageContents} 
+                  onSave={upsertContent} 
+                />
+              </div>
+            )}
+
+            {activeTab === "cms_contact" && (
+              <div className="space-y-6">
+                <div>
+                  <h2 className="text-2xl font-black text-slate-800">Contact Page CMS</h2>
+                  <p className="text-sm text-slate-500 mt-1">Edit the contact page address, email, phone and subtitle info.</p>
+                </div>
+                <ContactCMSForm 
+                  pageContents={pageContents} 
+                  onSave={upsertContent} 
+                />
+              </div>
+            )}
+
+            {activeTab === "cms_advanced" && (
+              <div className="space-y-6">
+                <div>
+                  <h2 className="text-2xl font-black text-slate-800">Advanced CMS (Raw Keys)</h2>
+                  <p className="text-sm text-slate-500 mt-1">Manage and edit raw page keys and content keys in the database.</p>
+                </div>
+
+                <form onSubmit={submitContent} className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+                  <h3 className="text-lg font-bold text-slate-800 mb-4">{editingContentId ? "Edit Content Key" : "Add New Content Key"}</h3>
+                  <div className="grid gap-6 md:grid-cols-2">
+                    <div className="flex flex-col gap-2">
+                      <label className="text-xs font-bold uppercase tracking-wider text-slate-500">Page Key (e.g. "about")</label>
+                      <input
+                        type="text"
+                        placeholder="e.g. about"
+                        value={contentForm.page_key}
+                        onChange={(e) => setContentForm({ ...contentForm, page_key: e.target.value })}
+                        className="rounded-lg border px-4 py-3 text-sm"
+                        required
+                      />
+                    </div>
+                    <div className="flex flex-col gap-2">
+                      <label className="text-xs font-bold uppercase tracking-wider text-slate-500">Content Key (e.g. "intro_text")</label>
+                      <input
+                        type="text"
+                        placeholder="e.g. intro_text"
+                        value={contentForm.content_key}
+                        onChange={(e) => setContentForm({ ...contentForm, content_key: e.target.value })}
+                        className="rounded-lg border px-4 py-3 text-sm"
+                        required
+                      />
+                    </div>
+                    <div className="flex flex-col gap-2 md:col-span-2">
+                      <label className="text-xs font-bold uppercase tracking-wider text-slate-500">Content Text (HTML / Plain Text Supported)</label>
+                      <textarea
+                        rows={4}
+                        placeholder="Type the page content here..."
+                        value={contentForm.content_text}
+                        onChange={(e) => setContentForm({ ...contentForm, content_text: e.target.value })}
+                        className="rounded-lg border px-4 py-3 text-sm"
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <div className="mt-6 flex gap-4">
+                    <button className="rounded-lg bg-[#0b3b8f] px-6 py-3 font-semibold text-white text-sm">
+                      {editingContentId ? "Update Content" : "Add Content"}
+                    </button>
+                    {editingContentId && (
+                      <button
+                        type="button"
+                        onClick={resetContentForm}
+                        className="rounded-lg bg-slate-200 px-6 py-3 font-semibold text-sm"
+                      >
+                        Cancel
+                      </button>
+                    )}
+                  </div>
+                </form>
+
+                <div className="overflow-x-auto rounded-xl bg-white border border-slate-200 shadow-sm p-0">
+                  <table className="w-full border-collapse">
+                    <thead className="bg-slate-50 text-slate-500 text-xs uppercase tracking-wider font-bold border-b border-slate-200">
+                      <tr>
+                        <th className="px-4 py-3 text-left">Page</th>
+                        <th className="px-4 py-3 text-left">Content Key</th>
+                        <th className="px-4 py-3 text-left">Text Sneak Peek</th>
+                        <th className="px-4 py-3 text-left">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {pageContents.map((row) => (
+                        <tr key={row.id} className="border-b hover:bg-slate-50">
+                          <td className="px-5 py-3.5 text-sm font-bold text-[#0b3b8f]">{row.page_key}</td>
+                          <td className="px-5 py-3.5 text-sm font-semibold text-slate-900">{row.content_key}</td>
+                          <td className="px-5 py-3.5 text-sm text-slate-500 truncate max-w-[200px]">{row.content_text}</td>
+                          <td className="px-5 py-3.5 text-sm text-slate-700">
+                            <div className="flex gap-2">
+                              <button
+                                onClick={() => {
+                                  setEditingContentId(row.id);
+                                  setContentForm({
+                                    page_key: row.page_key,
+                                    content_key: row.content_key,
+                                    content_text: row.content_text,
+                                  });
+                                  window.scrollTo({ top: 0, behavior: "smooth" });
+                                }}
+                                className="rounded bg-amber-500 px-4 py-2 text-sm font-semibold text-white hover:bg-amber-600 transition"
+                              >
+                                Edit
+                              </button>
+                              <button
+                                onClick={() => deleteContent(row.id)}
+                                className="rounded bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700 transition"
+                              >
+                                Delete
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                      {pageContents.length === 0 && (
+                        <tr>
+                          <td colSpan={4} className="px-5 py-8 text-center text-sm text-slate-500 font-medium bg-slate-50/50">
+                            No page content keys added yet. Use the form above to add your first dynamic content string!
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+
+
+            {activeTab === "admin_users" && (
+              <div className="space-y-6">
+                <div>
+                  <h2 className="text-2xl font-black text-slate-800">Admin Accounts</h2>
+                  <p className="text-sm text-slate-500 mt-1">Add, review, or revoke login credentials for the admin portal.</p>
+                </div>
+
+                <div className="grid gap-6 lg:grid-cols-3">
+                  {/* Form Card */}
+                  <form onSubmit={addAdminUser} className="lg:col-span-1 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm flex flex-col gap-4 self-start">
+                    <h3 className="text-lg font-bold text-slate-800">Create Admin Account</h3>
+                    
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-xs font-bold uppercase tracking-wider text-slate-500">Username</label>
+                      <input
+                        type="text"
+                        placeholder="Enter username"
+                        value={adminForm.username}
+                        onChange={(e) => setAdminForm({ ...adminForm, username: e.target.value })}
+                        className="rounded-lg border px-4 py-2.5 text-sm bg-white"
+                        required
+                      />
+                    </div>
+
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-xs font-bold uppercase tracking-wider text-slate-500">Password</label>
+                      <input
+                        type="password"
+                        placeholder="Enter password"
+                        value={adminForm.password}
+                        onChange={(e) => setAdminForm({ ...adminForm, password: e.target.value })}
+                        className="rounded-lg border px-4 py-2.5 text-sm bg-white"
+                        required
+                      />
+                    </div>
+
+                    <button className="mt-2 rounded-lg bg-[#0b3b8f] py-2.5 font-semibold text-white text-sm hover:bg-[#002a52] transition">
+                      Create Account
+                    </button>
+                  </form>
+
+                  {/* List Card */}
+                  <div className="lg:col-span-2 rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden flex flex-col">
+                    <div className="px-6 py-4 border-b border-slate-200">
+                      <h3 className="text-lg font-bold text-slate-800">Existing Admins</h3>
+                    </div>
+                    <div className="overflow-x-auto flex-1">
+                      <table className="w-full border-collapse">
+                        <thead className="bg-slate-50 text-slate-500 text-xs uppercase tracking-wider font-bold border-b border-slate-200">
+                          <tr>
+                            <th className="px-6 py-3 text-left">Username</th>
+                            <th className="px-6 py-3 text-left">Created At</th>
+                            <th className="px-6 py-3 text-right">Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-100">
+                          {adminsList.map((admin) => (
+                            <tr key={admin.id} className="hover:bg-slate-50/80 transition-colors">
+                              <td className="px-6 py-4 text-sm font-semibold text-slate-800">{admin.username}</td>
+                              <td className="px-6 py-4 text-sm text-slate-500">
+                                {admin.created_at ? new Date(admin.created_at).toLocaleDateString() : "N/A"}
+                              </td>
+                              <td className="px-6 py-4 text-sm text-right">
+                                <button
+                                  type="button"
+                                  onClick={() => deleteAdminUser(admin.id)}
+                                  className="text-red-600 hover:text-red-800 font-semibold transition"
+                                >
+                                  Delete
+                                </button>
+                              </td>
+                            </tr>
+                          ))}
+                          {adminsList.length === 0 && (
+                            <tr>
+                              <td colSpan={3} className="px-6 py-8 text-center text-sm text-slate-400 font-medium">
+                                No admin accounts found in the database.
+                              </td>
+                            </tr>
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+
           </main>
         </div>
       </div>
       <Footer />
     </div>
+  );
+};
+
+// Sub-components for separated page editors
+const LandingCMSForm = ({ pageContents, onSave }: { pageContents: any[], onSave: (pk: string, ck: string, txt: string) => void }) => {
+  const heroTitle = pageContents.find(c => c.page_key === "landing" && c.content_key === "hero_title")?.content_text || "Global Excellence";
+  const heroDesc = pageContents.find(c => c.page_key === "landing" && c.content_key === "hero_desc")?.content_text || "Empowering minds and shaping the future through uncompromising technology research.";
+
+  const [title, setTitle] = useState(heroTitle);
+  const [desc, setDesc] = useState(heroDesc);
+
+  useEffect(() => {
+    setTitle(heroTitle);
+    setDesc(heroDesc);
+  }, [heroTitle, heroDesc]);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onSave("landing", "hero_title", title);
+    onSave("landing", "hero_desc", desc);
+    alert("Landing page content updated successfully!");
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm space-y-6">
+      <div className="flex flex-col gap-2">
+        <label className="text-xs font-bold uppercase tracking-wider text-slate-500">Hero Heading Title</label>
+        <input
+          type="text"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          className="rounded-lg border px-4 py-3 text-sm"
+          required
+        />
+      </div>
+      <div className="flex flex-col gap-2">
+        <label className="text-xs font-bold uppercase tracking-wider text-slate-500">Hero Subdescription</label>
+        <textarea
+          rows={3}
+          value={desc}
+          onChange={(e) => setDesc(e.target.value)}
+          className="rounded-lg border px-4 py-3 text-sm"
+          required
+        />
+      </div>
+      <button className="rounded-lg bg-[#0b3b8f] px-6 py-3 font-semibold text-white text-sm">
+        Save Landing Page Content
+      </button>
+    </form>
+  );
+};
+
+const AboutCMSForm = ({ pageContents, onSave }: { pageContents: any[], onSave: (pk: string, ck: string, txt: string) => void }) => {
+  const introTextVal = pageContents.find(c => c.page_key === "about" && c.content_key === "intro_text")?.content_text || "The IEEE Student Branch of Sri Ramakrishna Engineering College...";
+  const principalMsgVal = pageContents.find(c => c.page_key === "about" && c.content_key === "principal_message")?.content_text || "Fostering innovation, research, and technical excellence...";
+  const counselorMsgVal = pageContents.find(c => c.page_key === "about" && c.content_key === "counselor_message")?.content_text || "Empowering students to transcend boundaries...";
+
+  const [introText, setIntroText] = useState(introTextVal);
+  const [principalMsg, setPrincipalMsg] = useState(principalMsgVal);
+  const [counselorMsg, setCounselorMsg] = useState(counselorMsgVal);
+
+  useEffect(() => {
+    setIntroText(introTextVal);
+    setPrincipalMsg(principalMsgVal);
+    setCounselorMsg(counselorMsgVal);
+  }, [introTextVal, principalMsgVal, counselorMsgVal]);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onSave("about", "intro_text", introText);
+    onSave("about", "principal_message", principalMsg);
+    onSave("about", "counselor_message", counselorMsg);
+    alert("About page content updated successfully!");
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm space-y-6">
+      <div className="flex flex-col gap-2">
+        <label className="text-xs font-bold uppercase tracking-wider text-slate-500">About SREC Intro Text</label>
+        <textarea
+          rows={3}
+          value={introText}
+          onChange={(e) => setIntroText(e.target.value)}
+          className="rounded-lg border px-4 py-3 text-sm"
+          required
+        />
+      </div>
+      <div className="flex flex-col gap-2">
+        <label className="text-xs font-bold uppercase tracking-wider text-slate-500">Principal Message Quote</label>
+        <textarea
+          rows={3}
+          value={principalMsg}
+          onChange={(e) => setPrincipalMsg(e.target.value)}
+          className="rounded-lg border px-4 py-3 text-sm"
+          required
+        />
+      </div>
+      <div className="flex flex-col gap-2">
+        <label className="text-xs font-bold uppercase tracking-wider text-slate-500">Counselor Message Quote</label>
+        <textarea
+          rows={3}
+          value={counselorMsg}
+          onChange={(e) => setCounselorMsg(e.target.value)}
+          className="rounded-lg border px-4 py-3 text-sm"
+          required
+        />
+      </div>
+      <button className="rounded-lg bg-[#0b3b8f] px-6 py-3 font-semibold text-white text-sm">
+        Save About Page Content
+      </button>
+    </form>
+  );
+};
+
+const ContactCMSForm = ({ pageContents, onSave }: { pageContents: any[], onSave: (pk: string, ck: string, txt: string) => void }) => {
+  const subtitleVal = pageContents.find(c => c.page_key === "contact" && c.content_key === "contact_subtitle")?.content_text || "We’d love to hear from you. Reach out to the IEEE Student Branch SREC.";
+  const addressVal = pageContents.find(c => c.page_key === "contact" && c.content_key === "address")?.content_text || "Vattamalaipalayam, NGGO Colony, Coimbatore, Tamil Nadu 641022";
+  const phoneVal = pageContents.find(c => c.page_key === "contact" && c.content_key === "phone")?.content_text || "+91 422 246 1588";
+  const emailVal = pageContents.find(c => c.page_key === "contact" && c.content_key === "email")?.content_text || "ieee@srec.ac.in";
+
+  const [subtitle, setSubtitle] = useState(subtitleVal);
+  const [address, setAddress] = useState(addressVal);
+  const [phone, setPhone] = useState(phoneVal);
+  const [email, setEmail] = useState(emailVal);
+
+  useEffect(() => {
+    setSubtitle(subtitleVal);
+    setAddress(addressVal);
+    setPhone(phoneVal);
+    setEmail(emailVal);
+  }, [subtitleVal, addressVal, phoneVal, emailVal]);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onSave("contact", "contact_subtitle", subtitle);
+    onSave("contact", "address", address);
+    onSave("contact", "phone", phone);
+    onSave("contact", "email", email);
+    alert("Contact page content updated successfully!");
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm space-y-6">
+      <div className="flex flex-col gap-2">
+        <label className="text-xs font-bold uppercase tracking-wider text-slate-500">Hero Subtitle</label>
+        <input
+          type="text"
+          value={subtitle}
+          onChange={(e) => setSubtitle(e.target.value)}
+          className="rounded-lg border px-4 py-3 text-sm"
+          required
+        />
+      </div>
+      <div className="flex flex-col gap-2">
+        <label className="text-xs font-bold uppercase tracking-wider text-slate-500">Address Text</label>
+        <textarea
+          rows={2}
+          value={address}
+          onChange={(e) => setAddress(e.target.value)}
+          className="rounded-lg border px-4 py-3 text-sm"
+          required
+        />
+      </div>
+      <div className="grid gap-6 md:grid-cols-2">
+        <div className="flex flex-col gap-2">
+          <label className="text-xs font-bold uppercase tracking-wider text-slate-500">Phone Number</label>
+          <input
+            type="text"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            className="rounded-lg border px-4 py-3 text-sm"
+            required
+          />
+        </div>
+        <div className="flex flex-col gap-2">
+          <label className="text-xs font-bold uppercase tracking-wider text-slate-500">Email Address</label>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="rounded-lg border px-4 py-3 text-sm"
+            required
+          />
+        </div>
+      </div>
+      <button className="rounded-lg bg-[#0b3b8f] px-6 py-3 font-semibold text-white text-sm">
+        Save Contact Page Content
+      </button>
+    </form>
   );
 };
 

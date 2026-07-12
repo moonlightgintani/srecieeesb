@@ -2,11 +2,13 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, Sparkles, Compass, Calendar, Trophy } from "lucide-react";
 import img1 from "@/assets/IMG20251015134912.jpg";
+import { usePageContent } from "@/hooks/useContent";
 
 const images = [img1];
 
 const HeroSection = () => {
    const [currentIndex, setCurrentIndex] = useState(0);
+   const { data: content } = usePageContent("landing");
 
    useEffect(() => {
       const interval = setInterval(() => {
@@ -56,7 +58,7 @@ const HeroSection = () => {
                      transition={{ duration: 1.8, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
                      className="text-5xl md:text-7xl lg:text-[8rem] font-serif text-white tracking-tight leading-tight md:leading-[0.9] drop-shadow-lg"
                   >
-                     Global <br className="md:hidden xl:block" /> Excellence<motion.span
+                     {content?.hero_title || "Global Excellence"}<motion.span
                         initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2, duration: 1 }}
                         className="italic text-blue-400"
                      >.</motion.span>
@@ -77,7 +79,7 @@ const HeroSection = () => {
                      transition={{ duration: 1.5, delay: 1.2, ease: [0.16, 1, 0.3, 1] }}
                      className="text-white/80 text-sm md:text-md lg:text-lg font-light uppercase tracking-[0.1em] md:tracking-[0.15em] leading-relaxed md:leading-loose"
                   >
-                     Empowering minds and shaping the future through uncompromising technology research.
+                     {content?.hero_desc || "Empowering minds and shaping the future through uncompromising technology research."}
                   </motion.p>
                </div>
 

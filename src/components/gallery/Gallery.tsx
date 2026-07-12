@@ -1,6 +1,8 @@
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/lib/supabase";
 import {
   ChevronDown,
   ChevronRight,
@@ -20,6 +22,8 @@ import {
 } from "lucide-react";
 import { Counter } from "./Counter";
 import { Lightbox } from "./Lightbox";
+import Footer from "@/components/Footer";
+import ieeeLogo from "@/assets/ieee-logo.png";
 import {
   achievements,
   categories,
@@ -43,9 +47,43 @@ export function Gallery() {
   const [openYear, setOpenYear] = useState<number>(2025);
   const [tIndex, setTIndex] = useState(0);
 
+  const { data: bucketList } = useQuery<any[]>({
+    queryKey: ["gallery_bucket_images"],
+    queryFn: async () => {
+      const { data, error } = await supabase.storage.from("gallery").list("", {
+        limit: 100
+      });
+      if (error) {
+        console.error("Storage error:", error);
+        return [];
+      }
+      if (!data) return [];
+      
+      return data.map((file, idx) => {
+        const { data: { publicUrl } } = supabase.storage.from("gallery").getPublicUrl(file.name);
+        return {
+          id: `bucket-${idx}`,
+          title: file.name.split(".")[0].replace(/[-_]/g, " "),
+          date: "Uploaded Image",
+          description: "Storage Bucket Memory",
+          category: "Student Activities" as Category,
+          image: publicUrl,
+          year: 2026
+        };
+      });
+    }
+  });
+
+  const displayItems = useMemo(() => {
+    if (bucketList && bucketList.length > 0) {
+      return bucketList;
+    }
+    return galleryItems;
+  }, [bucketList]);
+
   const filtered = useMemo(
-    () => (filter === "All" ? galleryItems : galleryItems.filter((i) => i.category === filter)),
-    [filter],
+    () => (filter === "All" ? displayItems : displayItems.filter((i) => i.category === filter)),
+    [filter, displayItems],
   );
 
   const openLightbox = (id: string) => {
@@ -65,9 +103,7 @@ export function Gallery() {
       <header className="fixed top-0 left-0 right-0 z-40 glass-card">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6">
           <Link to="/" className="flex min-w-0 items-center gap-2">
-            <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-primary text-primary-foreground shadow-elegant">
-              <Cpu className="h-5 w-5" />
-            </div>
+            <img src={ieeeLogo} alt="IEEE Logo" className="h-9 w-auto object-contain shrink-0" />
             <div className="min-w-0">
               <p className="truncate text-sm font-bold text-primary">IEEE SB SREC</p>
               <p className="hidden text-xs text-muted-foreground sm:block">Student Branch</p>
@@ -87,13 +123,13 @@ export function Gallery() {
       </header>
 
       {/* Hero */}
-      <section id="top" className="relative overflow-hidden bg-hero-gradient pt-32 pb-24 text-white sm:pt-40 sm:pb-32">
+      <section id="top" className="relative overflow-hidden bg-slate-50 pt-32 pb-24 text-slate-900 sm:pt-40 sm:pb-32 border-b border-slate-150">
         {/* Floating particles */}
         <div className="pointer-events-none absolute inset-0 overflow-hidden">
           {[...Array(12)].map((_, i) => (
             <motion.div
               key={i}
-              className="absolute rounded-full bg-white/10"
+              className="absolute rounded-full bg-blue-500/5"
               style={{
                 width: 20 + (i % 4) * 20,
                 height: 20 + (i % 4) * 20,
@@ -103,7 +139,7 @@ export function Gallery() {
               animate={{
                 y: [0, -30, 0],
                 x: [0, 15, 0],
-                opacity: [0.2, 0.5, 0.2],
+                opacity: [0.1, 0.3, 0.1],
               }}
               transition={{
                 duration: 6 + (i % 4),
@@ -112,8 +148,8 @@ export function Gallery() {
               }}
             />
           ))}
-          <div className="absolute -right-40 -top-40 h-96 w-96 rounded-full bg-white/10 blur-3xl" />
-          <div className="absolute -bottom-40 -left-40 h-96 w-96 rounded-full bg-primary-light/30 blur-3xl" />
+          <div className="absolute -right-40 -top-40 h-96 w-96 rounded-full bg-blue-500/5 blur-3xl" />
+          <div className="absolute -bottom-40 -left-40 h-96 w-96 rounded-full bg-indigo-500/5 blur-3xl" />
         </div>
 
         <div className="relative mx-auto max-w-5xl px-4 text-center sm:px-6">
@@ -121,16 +157,16 @@ export function Gallery() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-4 py-2 text-xs font-medium backdrop-blur"
+            className="mb-6 inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50/80 px-4 py-2 text-xs font-semibold text-blue-800 backdrop-blur"
           >
-            <Sparkles className="h-3.5 w-3.5" />
+            <Sparkles className="h-3.5 w-3.5 text-blue-600 animate-pulse" />
             IEEE Student Branch · Sri Ramakrishna Engineering College
           </motion.div>
           <motion.h1
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.1 }}
-            className="text-5xl font-extrabold tracking-tight sm:text-7xl md:text-8xl"
+            className="text-5xl font-extrabold tracking-tight sm:text-7xl md:text-8xl text-[#0b3b8f]"
           >
             Gallery
           </motion.h1>
@@ -138,7 +174,7 @@ export function Gallery() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.2 }}
-            className="mx-auto mt-6 max-w-2xl text-base text-white/85 sm:text-lg"
+            className="mx-auto mt-6 max-w-2xl text-base text-slate-600 sm:text-lg"
           >
             Capturing the journey of innovation, technical excellence, leadership, and memorable
             moments at IEEE Student Branch SREC.
@@ -475,7 +511,7 @@ export function Gallery() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="relative mx-auto max-w-6xl overflow-hidden rounded-3xl bg-hero-gradient p-10 text-center text-white shadow-glow sm:p-16"
+          className="relative mx-auto max-w-6xl overflow-hidden rounded-3xl bg-gradient-to-br from-[#001a38] via-[#002a52] to-[#003764] p-10 text-center text-white shadow-glow sm:p-16"
         >
           <div className="absolute -right-24 -top-24 h-64 w-64 rounded-full bg-white/10 blur-3xl" />
           <div className="absolute -bottom-24 -left-24 h-64 w-64 rounded-full bg-white/10 blur-3xl" />
@@ -505,58 +541,7 @@ export function Gallery() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-primary-dark px-4 py-16 text-white sm:px-6">
-        <div className="mx-auto grid max-w-7xl gap-10 md:grid-cols-4">
-          <div>
-            <div className="flex items-center gap-3">
-              <div className="grid h-11 w-11 place-items-center rounded-xl bg-white text-primary">
-                <Cpu className="h-5 w-5" />
-              </div>
-              <div>
-                <p className="font-bold">IEEE SB SREC</p>
-                <p className="text-xs text-white/60">Student Branch</p>
-              </div>
-            </div>
-            <p className="mt-4 text-sm text-white/70">
-              Advancing technology for humanity at Sri Ramakrishna Engineering College.
-            </p>
-          </div>
-          <div>
-            <h4 className="font-semibold">Quick Links</h4>
-            <ul className="mt-4 space-y-2 text-sm text-white/70">
-              <li><a href="#gallery" className="hover:text-white">Gallery</a></li>
-              <li><a href="#featured" className="hover:text-white">Featured</a></li>
-              <li><a href="#timeline" className="hover:text-white">Timeline</a></li>
-              <li><a href="#videos" className="hover:text-white">Videos</a></li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="font-semibold">Contact</h4>
-            <ul className="mt-4 space-y-2 text-sm text-white/70">
-              <li className="flex items-center gap-2"><Mail className="h-4 w-4" /> ieee@srec.ac.in</li>
-              <li className="flex items-center gap-2"><Phone className="h-4 w-4" /> +91 422 245 9000</li>
-              <li className="flex items-start gap-2"><MapPin className="mt-0.5 h-4 w-4" /> Vattamalaipalayam, Coimbatore</li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="font-semibold">Follow</h4>
-            <div className="mt-4 flex gap-3">
-              {[Facebook, Instagram, Linkedin, Twitter].map((Icon, i) => (
-                <a
-                  key={i}
-                  href="#"
-                  className="grid h-10 w-10 place-items-center rounded-full bg-white/10 transition hover:bg-white/20"
-                >
-                  <Icon className="h-4 w-4" />
-                </a>
-              ))}
-            </div>
-          </div>
-        </div>
-        <div className="mx-auto mt-12 max-w-7xl border-t border-white/10 pt-6 text-center text-xs text-white/60">
-          © {new Date().getFullYear()} IEEE Student Branch, Sri Ramakrishna Engineering College. All rights reserved.
-        </div>
-      </footer>
+      <Footer />
 
       <Lightbox
         items={filtered}

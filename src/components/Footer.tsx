@@ -121,6 +121,8 @@ const Footer = () => (
           <span>School Code: 41347756</span>
           <span className="w-1.5 h-1.5 rounded-full bg-slate-700 inline-block"></span>
           <span>Branch Code: 61491</span>
+          <span className="w-1.5 h-1.5 rounded-full bg-slate-700 inline-block"></span>
+          <Link to="/admin-login" className="hover:text-white transition-colors text-slate-400">Admin Portal</Link>
         </div>
       </div>
 

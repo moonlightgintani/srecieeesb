@@ -6,8 +6,10 @@ import { supabase } from "@/lib/supabase";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { MapPin, Phone, Mail, Send, CheckCircle } from "lucide-react";
+import { usePageContent } from "@/hooks/useContent";
 
 const ContactPage = () => {
+  const { data: content } = usePageContent("contact");
   const [formData, setFormData] = useState({
     full_name: "",
     email: "",
@@ -72,7 +74,7 @@ const ContactPage = () => {
             Get In Touch
           </motion.h1>
           <p className="mt-4 text-xl text-blue-100 max-w-2xl mx-auto">
-            We’d love to hear from you. Reach out to the IEEE Student Branch SREC.
+            {content?.contact_subtitle || "We’d love to hear from you. Reach out to the IEEE Student Branch SREC."}
           </p>
         </div>
       </section>
@@ -89,7 +91,7 @@ const ContactPage = () => {
                 </div>
                 <div>
                   <h3 className="font-semibold text-lg">Sri Ramakrishna Engineering College</h3>
-                  <p className="text-slate-600">Vattamalaipalayam, NGGO Colony, Coimbatore, Tamil Nadu 641022</p>
+                  <p className="text-slate-600">{content?.address || "Vattamalaipalayam, NGGO Colony, Coimbatore, Tamil Nadu 641022"}</p>
                 </div>
               </div>
 
@@ -99,7 +101,7 @@ const ContactPage = () => {
                 </div>
                 <div>
                   <h3 className="font-semibold text-lg">Phone</h3>
-                  <p className="text-slate-600">+91 422 246 1588</p>
+                  <p className="text-slate-600">{content?.phone || "+91 422 246 1588"}</p>
                 </div>
               </div>
 
@@ -109,7 +111,7 @@ const ContactPage = () => {
                 </div>
                 <div>
                   <h3 className="font-semibold text-lg">Email</h3>
-                  <p className="text-slate-600">ieee@srec.ac.in</p>
+                  <p className="text-slate-600">{content?.email || "ieee@srec.ac.in"}</p>
                 </div>
               </div>
             </div>
