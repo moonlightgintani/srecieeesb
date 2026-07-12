@@ -43,7 +43,7 @@ const LatestHighlightsSection = () => {
               <span>Recent Highlights</span>
             </div>
             <h2 className="font-serif text-4xl md:text-5xl font-bold tracking-tight text-slate-900 drop-shadow-sm">
-              Discover Our <span className="text-slate-900 font-serif font-medium">Latest Work</span>
+              Discover Our <span className="text-slate-900 font-serif font-medium">Latest Events</span>
             </h2>
           </div>
           <Link to="/activities" className="mt-6 md:mt-0 inline-flex items-center gap-2 px-6 py-3 rounded-full bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-sm transition-all shadow-sm border border-slate-200 hover:border-slate-300 group">

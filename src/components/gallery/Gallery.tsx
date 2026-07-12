@@ -58,7 +58,7 @@ export function Gallery() {
         return [];
       }
       if (!data) return [];
-      
+
       return data.map((file, idx) => {
         const { data: { publicUrl } } = supabase.storage.from("gallery").getPublicUrl(file.name);
         return {
@@ -111,11 +111,9 @@ export function Gallery() {
           </Link>
           <nav className="hidden items-center gap-6 text-sm font-medium text-foreground/80 md:flex">
             <Link to="/" className="hover:text-primary">Home</Link>
-            <a href="#gallery" className="hover:text-primary">Gallery</a>
-            <a href="#featured" className="hover:text-primary">Featured</a>
-            <a href="#timeline" className="hover:text-primary">Timeline</a>
-            <a href="#videos" className="hover:text-primary">Videos</a>
-            <a href="#join" className="rounded-full bg-primary px-4 py-2 text-primary-foreground shadow-elegant transition hover:bg-primary-dark">
+            <a href="/about" className="hover:text-primary">About</a>
+            <a href="https://icaectsd-dahz.vercel.app/" className="hover:text-primary">AECTSD</a>
+            <a href="/contact" className="rounded-full bg-primary px-4 py-2 text-primary-foreground shadow-elegant transition hover:bg-primary-dark">
               Join IEEE
             </a>
           </nav>
@@ -237,11 +235,10 @@ export function Gallery() {
               <button
                 key={c}
                 onClick={() => setFilter(c)}
-                className={`rounded-full border px-4 py-2 text-sm font-medium transition ${
-                  filter === c
+                className={`rounded-full border px-4 py-2 text-sm font-medium transition ${filter === c
                     ? "border-primary bg-primary text-primary-foreground shadow-elegant"
                     : "border-border bg-white text-foreground/70 hover:border-primary hover:text-primary"
-                }`}
+                  }`}
               >
                 {c}
               </button>
@@ -495,9 +492,8 @@ export function Gallery() {
                 key={i}
                 onClick={() => setTIndex(i)}
                 aria-label={`Testimonial ${i + 1}`}
-                className={`h-2 rounded-full transition-all ${
-                  i === tIndex ? "w-8 bg-primary" : "w-2 bg-primary/30"
-                }`}
+                className={`h-2 rounded-full transition-all ${i === tIndex ? "w-8 bg-primary" : "w-2 bg-primary/30"
+                  }`}
               />
             ))}
           </div>
