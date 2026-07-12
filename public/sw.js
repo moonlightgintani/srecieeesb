@@ -1,4 +1,4 @@
-const CACHE_NAME = "srec-ieee-cache-v5";
+const CACHE_NAME = "srec-ieee-cache-v6";
 const urlsToCache = [
   "/manifest.json",
   "/ieee.png",
@@ -72,9 +72,11 @@ self.addEventListener("fetch", event => {
       return fetch(request).then(networkResponse => {
         if (networkResponse.status === 200) {
           const copy = networkResponse.clone();
-          caches.open(CACHE_NAME).then(cache => cache.put(request, copy));
+          caches.open(CACHE_NAME).then(cache => cache.put(request, copy).catch(() => {}));
         }
         return networkResponse;
+      }).catch(() => {
+        return new Response("Network error", { status: 408 });
       });
     })
   );
