@@ -8,7 +8,6 @@ import { Analytics } from "@vercel/analytics/react";
 import { Capacitor } from "@capacitor/core";
 import PWAInstallPrompt from "@/components/PWAInstallPrompt";
 import Index from "./pages/Index";
-import OfficeBearersPage from "./pages/OfficeBearersPage";
 import AboutPage from "./pages/AboutPage";
 import SocietiesPage from "./pages/SocietiesPage";
 import SocietyDetailPage from "./pages/SocietyDetailPage";
@@ -22,17 +21,18 @@ import ImPage from "./pages/ImPage";
 import CisPage from "./pages/CisPage";
 import JoinPage from "./pages/JoinPage";
 import ContactPage from "./pages/ContactPage";
-import MembersPage from "./pages/MembersPage";
+import TeamPage from "./pages/TeamPage";
+import PastOfficeBearersPage from "./pages/PastOfficeBearersPage";
 import AdminDashboardRoute from "./pages/AdminDashboard.tsx";
 import AdminLoginPage from "./pages/AdminLoginPage.tsx";
 import AwardsPage from "./pages/AwardsPage.tsx";
 import NotFound from "./pages/NotFound.tsx";
+
 import ActivitiesPage from "./pages/ActivitiesPage.tsx";
 import AnnualPlansPage from "./pages/AnnualPlansPage.tsx";
 import FundingsPlanPage from "./pages/FundingsPlanPage.tsx";
-import SeniorMembersPage from "./pages/SeniorMembersPage.tsx";
-import TeamPage from "./pages/Team.tsx";
-import ReportsPage from "./pages/ReportsPage.tsx";
+import GalleryPage from "./pages/GalleryPage.tsx";
+
 
 
 
@@ -57,12 +57,10 @@ const App = () => {
             <Route path="/" element={<Index />} />
             <Route path="/about" element={<AboutPage />} />
             <Route path="/activities" element={<ActivitiesPage />} />
-            <Route path="/Team" element={<TeamPage />} />
-            <Route path="/office-bearers" element={<OfficeBearersPage />} />
-            <Route path="/members" element={<MembersPage />} />
-            <Route path="/senior-members" element={<SeniorMembersPage />} />
+            <Route path="/team" element={<TeamPage />} />
+            <Route path="/past-bearers" element={<PastOfficeBearersPage />} />
+            <Route path="/gallery" element={<GalleryPage />} />
             <Route path="/awards" element={<AwardsPage />} />
-            <Route path="/reports" element={<ReportsPage />} />
             <Route path="/annual-plans" element={<AnnualPlansPage />} />
             <Route path="/funding" element={<FundingsPlanPage />} />
             <Route path="/societies" element={<SocietiesPage />} />

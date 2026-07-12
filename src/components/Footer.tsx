@@ -13,14 +13,16 @@ const linkGroups = [
       { label: "About Us", href: "/about" },
       { label: "Our Activities", href: "/activities" },
       { label: "Societies", href: "/societies" },
+      { label: "Gallery", href: "/gallery" },
     ]
   },
   {
     title: "People",
     links: [
-      { label: "Meet the Team", href: "/Team" },
-      { label: "Office Bearers", href: "/office-bearers" },
-      { label: "Advisory Board", href: "/senior-members" },
+      { label: "Meet the Team", href: "/team" },
+      { label: "Office Bearers", href: "/team#office-bearers" },
+      { label: "Advisory Board", href: "/team#advisory-board" },
+      { label: "Leadership Alumni", href: "/past-bearers" },
       { label: "Contact Us", href: "/contact" },
     ]
   }

@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import OfficeBearersAdmin from "@/components/OfficeBearersAdmin";
 import { Activity, Users, Settings, Briefcase, FileText, Banknote, ShieldCheck, Image as ImageIcon, LayoutDashboard, LogOut, TrendingUp } from "lucide-react";
 
 type ActivityRow = {
@@ -796,133 +797,7 @@ const AdminDashboard = () => {
             )}
 
             {activeTab === "office" && (
-              <div className="space-y-8">
-                <form onSubmit={submitOffice} className="rounded-xl bg-white p-6 md:p-8 shadow-sm border border-slate-200">
-                  <h3 className="mb-6 text-2xl font-bold text-[#0b3b8f]">
-                    {editingOfficeId ? "Edit Office Bearer" : "Add Office Bearer"}
-                  </h3>
-
-                  <div className="grid gap-4 md:grid-cols-2">
-                    <input
-                      type="text"
-                      placeholder="Name"
-                      value={officeForm.name}
-                      onChange={(e) => setOfficeForm({ ...officeForm, name: e.target.value })}
-                      className="rounded-lg border px-4 py-3"
-                      required
-                    />
-                    <input
-                      type="text"
-                      placeholder="Role"
-                      value={officeForm.role}
-                      onChange={(e) => setOfficeForm({ ...officeForm, role: e.target.value })}
-                      className="rounded-lg border px-4 py-3"
-                      required
-                    />
-                    <input
-                      type="text"
-                      placeholder="Department"
-                      value={officeForm.department}
-                      onChange={(e) => setOfficeForm({ ...officeForm, department: e.target.value })}
-                      className="rounded-lg border px-4 py-3"
-                    />
-                    <input
-                      type="number"
-                      placeholder="Year"
-                      value={officeForm.year}
-                      onChange={(e) => setOfficeForm({ ...officeForm, year: e.target.value })}
-                      className="rounded-lg border px-4 py-3"
-                    />
-                    <input
-                      type="text"
-                      placeholder="Academic Year (e.g., 2025-2026)"
-                      value={officeForm.academic_year}
-                      onChange={(e) => setOfficeForm({ ...officeForm, academic_year: e.target.value })}
-                      className="rounded-lg border px-4 py-3"
-                    />
-                    <input
-                      type="url"
-                      placeholder="Image URL"
-                      value={officeForm.image_url}
-                      onChange={(e) => setOfficeForm({ ...officeForm, image_url: e.target.value })}
-                      className="rounded-lg border px-4 py-3"
-                    />
-                    <input
-                      type="text"
-                      placeholder="Group Name"
-                      value={officeForm.group_name}
-                      onChange={(e) => setOfficeForm({ ...officeForm, group_name: e.target.value })}
-                      className="rounded-lg border px-4 py-3 md:col-span-2"
-                    />
-                  </div>
-
-                  <div className="mt-6 flex gap-4">
-                    <button className="rounded-lg bg-[#0b3b8f] px-6 py-3 font-semibold text-white">
-                      {editingOfficeId ? "Update" : "Add"}
-                    </button>
-                    {editingOfficeId && (
-                      <button
-                        type="button"
-                        onClick={resetOfficeForm}
-                        className="rounded-lg bg-slate-200 px-6 py-3 font-semibold"
-                      >
-                        Cancel
-                      </button>
-                    )}
-                  </div>
-                </form>
-
-                <div className="overflow-x-auto rounded-xl bg-white border border-slate-200 shadow-sm p-0">
-                  <table className="w-full border-collapse">
-                    <thead className="bg-slate-50 text-slate-500 text-xs uppercase tracking-wider font-bold border-b border-slate-200">
-                      <tr>
-                        <th className="px-4 py-3 text-left">Name</th>
-                        <th className="px-4 py-3 text-left">Role</th>
-                        <th className="px-4 py-3 text-left">Department</th>
-                        <th className="px-4 py-3 text-left">Year</th>
-                        <th className="px-4 py-3 text-left">Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {officeRows.map((row) => (
-                        <tr key={row.id} className="border-b">
-                          <td className="px-5 py-3.5 text-sm text-slate-700">{row.name}</td>
-                          <td className="px-5 py-3.5 text-sm text-slate-700">{row.role}</td>
-                          <td className="px-5 py-3.5 text-sm text-slate-700">{row.department}</td>
-                          <td className="px-5 py-3.5 text-sm text-slate-700">{row.year}</td>
-                          <td className="px-5 py-3.5 text-sm text-slate-700">
-                            <div className="flex gap-2">
-                              <button
-                                onClick={() => {
-                                  setEditingOfficeId(row.id);
-                                  setOfficeForm({
-                                    name: row.name,
-                                    role: row.role,
-                                    department: row.department || "",
-                                    academic_year: row.academic_year || "",
-                                    year: String(row.year),
-                                    group_name: row.group_name || "IEEE SB",
-                                    image_url: row.image_url || "",
-                                  });
-                                }}
-                                className="rounded bg-amber-500 px-4 py-2 text-sm font-semibold text-white"
-                              >
-                                Edit
-                              </button>
-                              <button
-                                onClick={() => deleteOffice(row.id)}
-                                className="rounded bg-red-600 px-4 py-2 text-sm font-semibold text-white"
-                              >
-                                Delete
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
+              <OfficeBearersAdmin />
             )}
 
             {activeTab === "members" && (
