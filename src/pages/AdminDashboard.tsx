@@ -643,8 +643,6 @@ const AdminDashboard = () => {
           scrollbar-width: none;
         }
       `}</style>
-      <Navbar />
-
       {/* LEFT SIDEBAR (TailAdmin Style) */}
       <aside className="hidden lg:flex flex-col w-[280px] bg-white border-r border-slate-200 shrink-0 h-screen sticky top-0 overflow-y-auto">
         {/* Brand Logo & Name */}
@@ -1773,7 +1771,6 @@ const AdminDashboard = () => {
           </main>
         </div>
       </div>
-      <Footer />
     </div>
   );
 };

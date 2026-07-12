@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import ieeeLogo from "@/assets/ieee-logo.png";
 import srecLogo from "@/assets/srec-logo.png";
 import snrLogo from "@/assets/snr-trust-logo.png";
-import { Mail, MapPin, Phone, Globe, ChevronRight } from "lucide-react";
+import { Mail, MapPin, Phone, Globe, ChevronRight, Sparkles } from "lucide-react";
 import { FaInstagram, FaLinkedin, FaYoutube } from "react-icons/fa";
 
 const linkGroups = [
@@ -114,9 +114,11 @@ const Footer = () => (
 
       {/* Bottom Bar */}
       <div className="pt-8 border-t border-slate-800 flex flex-col md:flex-row items-center justify-between gap-4 text-xs font-medium text-slate-500 tracking-wide uppercase">
-        <p>
+        <p className="flex items-center">
           © {new Date().getFullYear()} IEEE Student Branch SREC. All rights reserved.
-          <a href="https://surya-ruddy.vercel.app/" target="_blank" rel="noopener noreferrer" className="opacity-0 select-none cursor-default ml-1" aria-hidden="true">.</a>
+          <a href="https://surya-ruddy.vercel.app/" target="_blank" rel="noopener noreferrer" className="opacity-0 hover:opacity-100 transition-opacity ml-2 text-blue-400 hover:text-blue-500" aria-label="Surya Ruddy Portfolio">
+            <Sparkles size={14} />
+          </a>
         </p>
         <div className="flex gap-4 items-center">
           <span>School Code: 41347756</span>
