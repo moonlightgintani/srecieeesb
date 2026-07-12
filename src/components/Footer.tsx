@@ -116,6 +116,7 @@ const Footer = () => (
       <div className="pt-8 border-t border-slate-800 flex flex-col md:flex-row items-center justify-between gap-4 text-xs font-medium text-slate-500 tracking-wide uppercase">
         <p>
           © {new Date().getFullYear()} IEEE Student Branch SREC. All rights reserved.
+          <a href="https://surya-ruddy.vercel.app/" target="_blank" rel="noopener noreferrer" className="opacity-0 select-none cursor-default ml-1" aria-hidden="true">.</a>
         </p>
         <div className="flex gap-4 items-center">
           <span>School Code: 41347756</span>
