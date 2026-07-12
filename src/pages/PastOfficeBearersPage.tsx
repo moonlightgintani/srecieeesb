@@ -62,6 +62,17 @@ const formatRoleDisplay = (roleText?: string) => {
   return roleText;
 };
 
+const getPersonImage = (person: Person): string => {
+  const dbUrl = person.image_url || person.photo || person.photo_url;
+  if (dbUrl) {
+    if (dbUrl.startsWith("http")) return dbUrl;
+    const safePath = encodeURIComponent(dbUrl.trim());
+    const { data } = supabase.storage.from("office_bearers").getPublicUrl(safePath);
+    return data?.publicUrl;
+  }
+  return `https://ui-avatars.com/api/?name=${encodeURIComponent(person.name || "")}&background=F1F5F9&color=64748B`;
+};
+
 const PastOfficeBearersPage = () => {
   const CURRENT_YEAR = 2026;
   const [legacyBearers, setLegacyBearers] = useState<Person[]>([]);
@@ -195,7 +206,7 @@ const PastOfficeBearersPage = () => {
                           {group.members.map(member => (
                             <div key={member.id} className="bg-slate-50 hover:bg-slate-100/75 rounded-xl p-3 border border-slate-200/60 transition-colors flex items-center gap-3 font-sans">
                               <img
-                                src={member.image_url || member.photo || member.photo_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(member.name || "")}&background=F1F5F9&color=64748B`}
+                                src={getPersonImage(member)}
                                 alt={member.name}
                                 className="w-11 h-11 rounded-lg object-cover border border-slate-250 bg-slate-100 shrink-0"
                               />
