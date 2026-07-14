@@ -120,7 +120,7 @@ const AboutPage = () => {
                </span>
                <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl font-extrabold text-slate-900 mb-6 leading-tight tracking-tight">
                   About <br/>
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 font-serif">IEEE SREC</span>
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 font-serif"> SREC IEEE SB </span>
                </h1>
                <p className="text-slate-600 text-base md:text-lg leading-relaxed">
                   {content?.intro_text || "The IEEE Student Branch of Sri Ramakrishna Engineering College, operating since June 11th, 2001 under the IEEE Madras Section, is a vibrant hub promoting continuous technical excellence and professional evolution."}
