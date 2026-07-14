@@ -17,7 +17,7 @@ const navLinks = [
    { label: "Awards", href: "/awards" },
    { label: "Plans", href: "/annual-plans" },
    { label: "Gallery", href: "/gallery" },
-   { label: "AECTSD", href: "https://aectsd.vercel.app/" },
+   { label: "ICAECTSD 2027", href: "https://icaectsd-dahz.vercel.app/" },
    { label: "Funding", href: "/funding" },
    { label: "Contact", href: "/contact" },
    { label: "Admin", href: "/admin" },
