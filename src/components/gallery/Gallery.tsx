@@ -24,7 +24,6 @@ import { Counter } from "./Counter";
 import { Lightbox } from "./Lightbox";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
-import ieeeLogo from "@/assets/ieee-logo.png";
 import {
   achievements,
   categories,
