@@ -97,26 +97,8 @@ export function Gallery() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Nav */}
-      <header className="fixed top-0 left-0 right-0 z-40 glass-card">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6">
-          <Link to="/" className="flex min-w-0 items-center gap-2">
-            <img src={ieeeLogo} alt="IEEE Logo" className="h-9 w-auto object-contain shrink-0" />
-            <div className="min-w-0">
-              <p className="truncate text-sm font-bold text-primary">IEEE SB SREC</p>
-              <p className="hidden text-xs text-muted-foreground sm:block">Student Branch</p>
-            </div>
-          </Link>
-          <nav className="hidden items-center gap-6 text-sm font-medium text-foreground/80 md:flex">
-            <Link to="/" className="hover:text-primary">Home</Link>
-            <a href="/about" className="hover:text-primary">About</a>
-            <a href="https://icaectsd-dahz.vercel.app/" className="hover:text-primary">AECTSD</a>
-            <a href="/contact" className="rounded-full bg-primary px-4 py-2 text-primary-foreground shadow-elegant transition hover:bg-primary-dark">
-              Join IEEE
-            </a>
-          </nav>
-        </div>
-      </header>
+      {/* Global Navbar */}
+      <Navbar />
 
       {/* Hero */}
       <section id="top" className="relative overflow-hidden bg-gradient-to-b from-slate-50 to-slate-100 pt-32 pb-24 text-slate-900 sm:pt-40 sm:pb-32 border-b border-slate-200">
