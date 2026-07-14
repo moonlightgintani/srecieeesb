@@ -75,11 +75,8 @@ export function Gallery() {
   });
 
   const displayItems = useMemo(() => {
-    if (bucketList && bucketList.length > 0) {
-      return bucketList;
-    }
     return galleryItems;
-  }, [bucketList]);
+  }, []);
 
   const filtered = useMemo(
     () => (filter === "All" ? displayItems : displayItems.filter((i) => i.category === filter)),
@@ -526,7 +523,7 @@ export function Gallery() {
                 Join IEEE
               </a>
               <a
-                href="#gallery"
+                href="/about"
                 className="rounded-full border border-white/40 px-6 py-3 font-semibold text-white backdrop-blur transition hover:bg-white/10"
               >
                 Explore Events

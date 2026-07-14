@@ -51,6 +51,19 @@ const Navbar = () => {
       <>
          {/* Top Navbar */}
          <nav className="fixed top-0 left-0 w-full z-50 flex flex-col items-center">
+            {/* Announcement Banner for ICAECTSD 2027 */}
+            <div className="w-full bg-[#001c3d] text-white py-2 px-4 text-center text-xs md:text-sm font-semibold flex items-center justify-center gap-2 border-b border-cyan-500/20 relative z-50 shadow-md">
+               <span className="bg-cyan-500 text-slate-950 text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider animate-pulse shrink-0">ICAECTSD 2027</span>
+               <span className="truncate text-white/90">International Conference website is now live!</span>
+               <a 
+                  href="https://icaectsd-dahz.vercel.app/" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="underline text-cyan-300 hover:text-cyan-150 transition-colors inline-flex items-center gap-1 font-bold ml-1"
+               >
+                  Visit Website
+               </a>
+            </div>
 
             <div className="w-full flex flex-col items-center justify-center">
 

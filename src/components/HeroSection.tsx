@@ -4,7 +4,29 @@ import { ArrowRight, Sparkles, Compass, Calendar, Trophy } from "lucide-react";
 import img1 from "@/assets/IMG20251015134912.jpg";
 import { usePageContent } from "@/hooks/useContent";
 
-const images = [img1];
+// Scan local gallery folders for high-quality background images
+const bgModules = import.meta.glob("../assets/gallery/ieee/*.{jpg,jpeg,png,JPG,JPEG}", {
+   eager: true,
+}) as Record<string, { default: string }>;
+
+const selectedHeroBgs = [
+   "VISION X GROUP PHOTO 29.08.2025-ENHANCED.png",
+   "1.IEEE Day 2023 Event group photo.jpg",
+   "3. IEEE Student Branch Inaguration on Advancing Technology for Humanity - group photo on 01.09.2023.jpg",
+   "IEEE Day 1.jpg",
+   "IEEE Day 2.jpg",
+   "IMG_1836.JPG",
+   "IMG_1948.JPG"
+];
+
+const parsedBgUrls = Object.entries(bgModules)
+   .filter(([path]) => {
+      const fileName = path.split("/").pop() || "";
+      return selectedHeroBgs.includes(fileName);
+   })
+   .map(([_, module]) => module.default);
+
+const images = parsedBgUrls.length > 0 ? parsedBgUrls : [img1];
 
 const HeroSection = () => {
    const [currentIndex, setCurrentIndex] = useState(0);
@@ -124,6 +146,22 @@ const HeroSection = () => {
                   <div className="h-[1px] w-full bg-white/15" />
 
                   <div className="flex flex-col gap-3 text-left">
+                     <a href="https://icaectsd-dahz.vercel.app/" target="_blank" rel="noopener noreferrer" className="flex items-center justify-between p-4 rounded-2xl bg-gradient-to-r from-cyan-500/20 to-blue-500/20 border border-cyan-500/30 hover:from-cyan-500/30 hover:to-blue-500/30 hover:border-cyan-500/50 transition-all duration-300 group/item">
+                        <div className="flex items-center gap-3">
+                           <div className="w-10 h-10 rounded-xl bg-cyan-500/20 border border-cyan-500/40 flex items-center justify-center text-cyan-300 group-hover/item:scale-110 transition-transform">
+                              <Sparkles size={20} className="animate-pulse" />
+                           </div>
+                           <div>
+                              <p className="text-sm font-bold text-white flex items-center gap-1.5">
+                                 ICAECTSD 2027
+                                 <span className="bg-cyan-400 text-black text-[9px] font-black px-1.5 py-0.5 rounded uppercase leading-none animate-bounce">NEW</span>
+                              </p>
+                              <p className="text-xs text-cyan-200/80 font-medium">International Conference</p>
+                           </div>
+                        </div>
+                        <ArrowRight size={16} className="text-cyan-300 group-hover/item:translate-x-1 group-hover/item:text-white transition-all" />
+                     </a>
+
                      <a href="/societies" className="flex items-center justify-between p-4 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all duration-300 group/item">
                         <div className="flex items-center gap-3">
                            <div className="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-300 group-hover/item:scale-105 transition-transform">
