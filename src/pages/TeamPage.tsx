@@ -759,7 +759,7 @@ const TeamPage = () => {
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200 pb-4">
                 <div>
                   <h2 className="text-2xl font-black text-slate-900 flex items-center gap-2">
-                    <GraduationCap className="text-blue-600" size={24} /> Advisory Board
+                    <GraduationCap className="text-blue-600" size={24} /> Senior Members 
                   </h2>
                   <p className="text-xs text-slate-500 mt-1 font-medium">Distinguished faculty mentors guiding SREC IEEE Student Branch</p>
                 </div>
