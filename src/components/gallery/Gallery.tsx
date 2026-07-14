@@ -473,7 +473,13 @@ export function Gallery() {
                   “{testimonials[tIndex].quote}”
                 </p>
                 <div className="mt-6 flex items-center justify-center gap-3">
-                  <img src={testimonials[tIndex].avatar} alt={testimonials[tIndex].name} className="h-12 w-12 rounded-full object-cover" />
+                  {testimonials[tIndex].avatar ? (
+                    <img src={testimonials[tIndex].avatar} alt={testimonials[tIndex].name} className="h-12 w-12 rounded-full object-cover" />
+                  ) : (
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary font-bold text-sm">
+                      {testimonials[tIndex].name.split(" ").map((n: string) => n[0]).join("")}
+                    </div>
+                  )}
                   <div className="text-left">
                     <p className="font-bold">{testimonials[tIndex].name}</p>
                     <p className="text-sm text-muted-foreground">{testimonials[tIndex].dept}</p>
