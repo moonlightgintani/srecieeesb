@@ -118,9 +118,21 @@ export function Gallery() {
       </header>
 
       {/* Hero */}
-      <section id="top" className="relative overflow-hidden bg-slate-50 pt-32 pb-24 text-slate-900 sm:pt-40 sm:pb-32 border-b border-slate-150">
+      <section id="top" className="relative overflow-hidden bg-gradient-to-b from-slate-50 to-slate-100 pt-32 pb-24 text-slate-900 sm:pt-40 sm:pb-32 border-b border-slate-200">
+        {/* Infinite Scrolling Image Marquee Background */}
+        <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none opacity-[0.09] flex items-center">
+          <div className="flex gap-4 animate-marquee py-2 whitespace-nowrap">
+             {/* Render two copies of items to create seamless loop */}
+             {[...galleryItems.slice(0, 10), ...galleryItems.slice(0, 10)].map((item, idx) => (
+                <div key={idx} className="w-72 h-44 shrink-0 rounded-2xl overflow-hidden border border-slate-300 shadow-md">
+                   <img src={item.image} alt="" className="w-full h-full object-cover" />
+                </div>
+             ))}
+          </div>
+        </div>
+
         {/* Floating particles */}
-        <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div className="pointer-events-none absolute inset-0 overflow-hidden z-10">
           {[...Array(12)].map((_, i) => (
             <motion.div
               key={i}
@@ -147,7 +159,7 @@ export function Gallery() {
           <div className="absolute -bottom-40 -left-40 h-96 w-96 rounded-full bg-indigo-500/5 blur-3xl" />
         </div>
 
-        <div className="relative mx-auto max-w-5xl px-4 text-center sm:px-6">
+        <div className="relative mx-auto max-w-5xl px-4 text-center sm:px-6 z-20">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -523,13 +535,13 @@ export function Gallery() {
             </p>
             <div className="mt-8 flex flex-wrap justify-center gap-3">
               <a
-                href="#"
+                href="/about"
                 className="rounded-full bg-white px-6 py-3 font-semibold text-primary shadow-lg transition hover:scale-105"
               >
                 Join IEEE
               </a>
               <a
-                href="/about"
+                href="/activities"
                 className="rounded-full border border-white/40 px-6 py-3 font-semibold text-white backdrop-blur transition hover:bg-white/10"
               >
                 Explore Events

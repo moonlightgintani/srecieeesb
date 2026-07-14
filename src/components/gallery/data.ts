@@ -516,7 +516,7 @@ export const videoGallery = [
 ];
 
 export const testimonials = [
-  { name: "Nithin Annamalai", dept: "ECE, Final Year", quote: "IEEE SB SREC gave me the confidence to speak at my first international conference. The community is unmatched.", rating: 5, avatar: "https://i.pravatar.cc/150?img=47" },
+  { name: "Nithin Annamalai", dept: "EEE, Second Year", quote: "IEEE SB SREC gave me the confidence to speak at my first international conference. The community is unmatched.", rating: 5, avatar: "" },
   { name: "Rahul Venkatesh", dept: "CSE, Third Year", quote: "From my first workshop to leading a hackathon team — every milestone happened here.", rating: 5, avatar: "https://i.pravatar.cc/150?img=12" },
   { name: "Divya Suresh", dept: "EEE, Alumni '23", quote: "The industrial visits and mentorship shaped the engineer I am today. Grateful forever.", rating: 5, avatar: "https://i.pravatar.cc/150?img=32" },
   { name: "Karthik Rajan", dept: "IT, Second Year", quote: "A branch that treats every idea seriously. Best decision I made in college.", rating: 5, avatar: "https://i.pravatar.cc/150?img=15" },
