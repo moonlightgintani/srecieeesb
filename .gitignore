@@ -26,7 +26,10 @@ dist-ssr
 .vercel
 .env*.local
 
-src/assets/gallery/
+src/assets/gallery/ieee/IEEE/
+src/assets/gallery/ieee/IEEE INAUGURATION/
+src/assets/gallery/ieee/IEEE PROGRAM COMPETITION/
+src/assets/gallery/ieee/Report/
 .env
 .agents
 *.apk

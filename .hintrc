@@ -14,6 +14,15 @@
           "border: 1px solid color-mix(in oklab, white 15%, transparent)"
         ]
       }
+    ],
+    "apple-touch-icons": "off",
+    "compat-api/html": [
+      "default",
+      {
+        "ignore": [
+          "meta[name=theme-color]"
+        ]
+      }
     ]
   }
 }
