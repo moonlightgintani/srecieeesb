@@ -100,11 +100,15 @@ INSERT INTO advisors (name, role) VALUES
 ('Dr.P.Perumal', 'Dean-SAC'),
 ('Dr.A.Soundarrajan', 'Principal');
 
-INSERT INTO societies (name) VALUES
-('IEEE Power Electronics Society'),
-('IEEE EMB Society'),
-('IEEE Communications Society'),
-('IEEE Measurement & Instrumentation Society');
+INSERT INTO societies (name, description) VALUES
+('IEEE Student Branch SREC', 'The central student branch uniting all engineering disciplines, driving flagship technical events, leadership workshops, and IEEE global initiatives.'),
+('IEEE Women in Engineering', 'Promoting women engineers and scientists, inspiring girls around the world to follow their academic interests in a career in engineering and science.'),
+('IEEE Engineering in Medicine and Biology Society', 'Integrating engineering with medicine and biology to advance health tech, medical imaging, neural engineering, and biosensing devices.'),
+('IEEE Computer Society', 'Dedicated to computer science and information technology, software architecture, artificial intelligence, cloud systems, and cybersecurity.'),
+('IEEE Communications Society', 'Promoting technological innovation in telecommunications, 5G/6G wireless networks, signal processing, and IoT ecosystems.'),
+('IEEE Power Electronics Society', 'Focusing on clean energy conversion, renewable power systems, electric vehicles, smart grid tech, and power semiconductor applications.'),
+('IEEE Measurement & Instrumentation Society', 'Advancing measurement science, precision sensors, automated testing, metrology, and industrial instrumentation systems.'),
+('IEEE Computational Intelligence Society', 'Exploring neural networks, deep learning, fuzzy logic, evolutionary computation, and intelligent system design.');
 
 INSERT INTO activities (year, sno, event, date, chief_guest, participants) VALUES
 (2025, 1, 'IEEE Student Branch Inaugural Function', '17.09.2025', 'Mr. Viswanathan Rajalingam, VP & GM, Multicoreware, Chennai', 'All IEEE Members'),

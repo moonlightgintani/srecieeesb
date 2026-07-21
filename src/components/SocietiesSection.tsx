@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
-import { Cpu, Radio, HeartPulse, Gauge, Loader2, Target, Network, Layers, Activity, ArrowRight, Award, Users } from "lucide-react";
+import { Cpu, Radio, HeartPulse, Gauge, Loader2, Target, Network, Layers, Activity, ArrowRight, Award, Users, ExternalLink } from "lucide-react";
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 
 import wieLogo from "@/assets/societies/WIE.jpg";
 import embsLogo from "@/assets/societies/EMBS.jpg";
@@ -24,8 +25,19 @@ const logoMapping: Record<string, string> = {
   im: imlogo,
 };
 
-const societyLinks: Record<string, string> = {
-  srec: "/about",
+const internalSocietyLinks: Record<string, string> = {
+  srec: "/societies/srec",
+  wie: "/societies/wie",
+  embs: "/societies/embs",
+  cs: "/societies/cs",
+  comsoc: "/societies/comsoc",
+  pels: "/societies/pels",
+  im: "/societies/im",
+  cis: "/societies/cis",
+};
+
+const externalSocietyLinks: Record<string, string> = {
+  srec: "https://www.ieee.org/",
   wie: "https://wie.ieee.org/about/",
   embs: "https://www.embs.org/about/",
   cs: "https://www.computer.org/about/",
@@ -145,53 +157,62 @@ const SocietiesSection = () => {
             const isHovered = hoveredIdx === i;
             const linkSlug = getSlugForSociety(s.name, s.id);
             const logo = logoMapping[linkSlug];
-            const externalUrl = societyLinks[linkSlug] || "https://www.ieee.org/";
+            const internalUrl = internalSocietyLinks[linkSlug] || `/societies/${s.id}`;
+            const externalUrl = externalSocietyLinks[linkSlug] || "https://www.ieee.org/";
             
             return (
-              <motion.a
-                href={externalUrl}
-                target="_blank"
-                rel="noopener noreferrer"
+              <motion.div
                 key={s.id || s.name}
                 onMouseEnter={() => setHoveredIdx(i)}
                 onMouseLeave={() => setHoveredIdx(null)}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                className="relative group rounded-3xl overflow-hidden cursor-pointer bg-white/70 backdrop-blur-xl border border-slate-200/60 shadow-sm hover:shadow-md hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between min-h-[300px]"
+                className="relative group rounded-3xl overflow-hidden bg-white/70 backdrop-blur-xl border border-slate-200/60 shadow-sm hover:shadow-md hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between min-h-[300px]"
               >
-                <div className="p-6 md:p-8">
-                  <div className="flex justify-between items-start mb-6">
-                    <div className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-all duration-500 ease-out relative overflow-hidden ${isHovered ? 'shadow-md scale-105 border border-slate-200 bg-white' : 'bg-slate-50 border border-slate-100'}`}>
-                      {logo ? (
-                        <img src={logo} alt={`${s.name} logo`} className="w-full h-full object-contain p-1" />
-                      ) : (
-                        <div className="text-slate-500">
-                          <Icon className="h-6 w-6" />
-                        </div>
-                      )}
+                <Link to={internalUrl} className="p-6 md:p-8 flex-1 flex flex-col justify-between">
+                  <div>
+                    <div className="flex justify-between items-start mb-6">
+                      <div className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-all duration-500 ease-out relative overflow-hidden ${isHovered ? 'shadow-md scale-105 border border-slate-200 bg-white' : 'bg-slate-50 border border-slate-100'}`}>
+                        {logo ? (
+                          <img src={logo} alt={`${s.name} logo`} className="w-full h-full object-contain p-1" />
+                        ) : (
+                          <div className="text-slate-500">
+                            <Icon className="h-6 w-6" />
+                          </div>
+                        )}
+                      </div>
+                      <span className="text-[9px] font-bold tracking-widest uppercase text-blue-600 bg-blue-50 px-2.5 py-1 rounded-full border border-blue-100/50">Active Chapter</span>
                     </div>
-                    <span className="text-[9px] font-bold tracking-widest uppercase text-blue-600 bg-blue-50 px-2.5 py-1 rounded-full border border-blue-100/50">Active</span>
+
+                    <h3 className="font-serif font-bold text-lg text-slate-800 mb-3 group-hover:text-blue-650 transition-colors">
+                      {s.name}
+                    </h3>
+                    
+                    {s.description ? (
+                      <p className="text-slate-500 text-xs md:text-sm leading-relaxed line-clamp-4">
+                        {s.description}
+                      </p>
+                    ) : (
+                      <p className="text-xs text-slate-400 italic">Exploring innovations pushing technological boundaries.</p>
+                    )}
                   </div>
 
-                  <h3 className="font-serif font-bold text-lg text-slate-800 mb-3 group-hover:text-blue-650 transition-colors">
-                    {s.name}
-                  </h3>
-                  
-                  {s.description ? (
-                    <p className="text-slate-500 text-xs md:text-sm leading-relaxed line-clamp-4">
-                      {s.description}
-                    </p>
-                  ) : (
-                    <p className="text-xs text-slate-400 italic">Exploring innovations pushing technological boundaries.</p>
-                  )}
-                </div>
-
-                <div className="px-6 md:px-8 pb-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-slate-400 group-hover:text-blue-650 transition-colors">
-                  <span>Society Homepage</span>
-                  <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
-                </div>
-              </motion.a>
+                  <div className="pt-6 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-blue-600 group-hover:text-blue-700 transition-colors mt-6">
+                    <span className="flex items-center gap-1.5">View Chapter Page <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" /></span>
+                    <a 
+                      href={externalUrl} 
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      onClick={(e) => e.stopPropagation()} 
+                      className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
+                      title="IEEE Global Portal"
+                    >
+                      <ExternalLink size={14} />
+                    </a>
+                  </div>
+                </Link>
+              </motion.div>
             );
           })}
         </div>
